@@ -12,7 +12,7 @@ import bet.sampling.basicSampling as bsam
 np.random.seed(20)
 
 dim_input = 2 # dimension of paramater space
-dim_output = 3 # number of QoI
+# dim_output = 3 # number of QoI
 
 num_samples_emulate_data_space = 1E4 # this is P 
 num_samples_param_space = 1E4 # this is N
@@ -35,42 +35,37 @@ sampler = bsam.sampler(my_model)
 # The partition set is drawn from a regular grid to represent 'possible observations'
 Partition_Set = samp.sample_set(dim_input)
 Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-# Sample from regular grid on parameter space. The MC assumption is true.
-Partition_Discretization = sampler.create_regular_discretization(Partition_Set,
-            num_samples_per_dim = np.repeat(grid_cells_per_dim-1, dim_input, axis=0))
-Partition_Discretization._input_sample_set.estimate_volume_mc()
+
+# ONE OF TWO METHODS
+Partition_Set.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim-1, dim_input, axis=0))
+Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
+# Partition_Discretization = sampler.create_regular_discretization(Partition_Set,
+#             num_samples_per_dim = np.repeat(grid_cells_per_dim-1, dim_input, axis=0))
+Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
+
 
 # The emulated set is drawn from a given density to represent 'likely observations'
+# TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
 Emulated_Set = samp.sample_set(dim_input)
 Emulated_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-
-# add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
 Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
             size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
-Emulated_Set.estimate_volume(n_mc_points=num_samples_emulate_data_space*100)
 Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
-
-
-input_samples = samp.sample_set(dim_input)
-input_samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
-
-
-
-
+Emulated_Discretization._input_sample_set.estimate_volume(n_mc_points=num_samples_emulate_data_space*100) # The MC assumption is false.
 
 
 # Sample from parameter space
-input_samples = sampler.random_sample_set('random', input_samples,
-                num_samples = num_samples_param_space)
+Input_Samples = samp.sample_set(dim_input)
+Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
 
+Input_Samples.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
+My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
+# My_Discretization = sampler.create_random_discretization('random', Input_Samples, 
+#             num_samples = num_samples_param_space)
 MC_assumption = True
 # Estimate volumes of Voronoi cells associated with the parameter samples
 if MC_assumption is False:
-    input_samples.estimate_volume(n_mc_points=1E5)
+    My_Discretization._input_sample_set.estimate_volume(n_mc_points=100*num_samples_param_space)
 else:
-    input_samples.estimate_volume_mc()
+    My_Discretization._input_sample_set.estimate_volume_mc()
 
-
-
-# Create the discretization object using the input samples
-my_discretization = sampler.compute_QoI_and_create_discretization(ref_input_samples)

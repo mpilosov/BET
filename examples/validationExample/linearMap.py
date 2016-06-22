@@ -49,7 +49,7 @@ per dimension.
 # This is the set on which we are computing our approximation to the density. 
 randomSampling = False
 if randomSampling is True:
-    input_samples = sampler.random_sample_set('random', input_samples, num_samples=1E4)
+    input_samples = sampler.random_sample_set('random', input_samples, num_samples=1E2)
 else:
     input_samples = sampler.regular_sample_set(input_samples, num_samples_per_dim=[50, 50])
 '''
@@ -63,7 +63,7 @@ See what happens if the MC assumption is not assumed to be true, and
 if different numbers of points are used to estimate the volumes of
 the Voronoi cells.
 '''
-MC_assumption = True
+MC_assumption = False
 # Estimate volumes of Voronoi cells associated with the parameter samples
 if MC_assumption is False:
     input_samples.estimate_volume(n_mc_points=1E4)
