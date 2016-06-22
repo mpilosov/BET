@@ -31,6 +31,7 @@ ref_input_samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
 
 emul_input_samples = samp.sample_set(dim_input)
 emul_input_samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+
 # add in functionality here to change domain.
 emul_input_samples.set_values(np.array( [ np.random.beta(a=alpha, b=beta,
             size=dim_input) for i in range(int(num_samples_emulate_data_space))]))
@@ -38,6 +39,7 @@ emul_input_samples.set_values(np.array( [ np.random.beta(a=alpha, b=beta,
 
 input_samples = samp.sample_set(dim_input)
 input_samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+
 
 # Define the sampler that will be used to create the discretization
 # object, which is the fundamental object used by BET to compute

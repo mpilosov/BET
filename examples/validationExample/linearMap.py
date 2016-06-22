@@ -5,7 +5,7 @@
 """
 This 2D linear example verifies that geometrically distinct QoI can
 recreate a probability measure on the input parameter space
-used to define the output probability measure. 
+used to define the output probability measure.
 """
 
 from bet.Comm import comm, MPI
@@ -19,6 +19,8 @@ import bet.sample as samp
 import bet.sampling.basicSampling as bsam
 import scipy.spatial as spatial
 from myModel import my_model
+
+np.random.seed(20)
 
 # Initialize 3-dimensional input parameter sample set object
 input_samples = samp.sample_set(2)
@@ -43,13 +45,13 @@ Try using 'lhs' instead of 'random' in the random_sample_set.
 If using regular sampling, try different numbers of samples
 per dimension.
 '''
-# Generate samples on the parameter space
+# Generate samples on the parameter space - THIS IS THE M/N - you'll have two of these
+# This is the set on which we are computing our approximation to the density. 
 randomSampling = False
 if randomSampling is True:
-    input_samples = sampler.random_sample_set('random', input_samples, num_samples=1E3)
+    input_samples = sampler.random_sample_set('random', input_samples, num_samples=1E4)
 else:
-    input_samples = sampler.regular_sample_set(input_samples, num_samples_per_dim=[30, 30])
-
+    input_samples = sampler.regular_sample_set(input_samples, num_samples_per_dim=[50, 50])
 '''
 Suggested changes for user:
 
@@ -64,13 +66,12 @@ the Voronoi cells.
 MC_assumption = True
 # Estimate volumes of Voronoi cells associated with the parameter samples
 if MC_assumption is False:
-    input_samples.estimate_volume(n_mc_points=1E5)
+    input_samples.estimate_volume(n_mc_points=1E4)
 else:
     input_samples.estimate_volume_mc()
 
 # Create the discretization object using the input samples
-my_discretization = sampler.compute_QoI_and_create_discretization(input_samples,
-                                               savefile = 'Validation_discretization.txt.gz')
+my_discretization = sampler.compute_QoI_and_create_discretization(input_samples)
 
 '''
 Compute the output distribution simple function approximation by
@@ -96,7 +97,9 @@ Try setting this to 2, 5, 10, 50, and 100. Can you explain what you
 are seeing? To see an exaggerated effect, try using random sampling
 above with n_samples set to 1E2.
 '''
-num_samples_discretize_D = 1
+num_samples_discretize_D = 20
+# this is how many pieces there are to the simple function.
+# higher leads to more variability (maybe less accurate in Hellinger?) in density
 num_iid_samples = 1E5
 
 Partition_set = samp.sample_set(2)
@@ -122,9 +125,10 @@ simpleFunP.user_partition_user_distribution(my_discretization,
 calculateP.prob(my_discretization)
 
 # Show some plots of the different sample sets
-plotD.scatter_2D(my_discretization._input_sample_set, filename = 'Parameter_Samples.eps')
-plotD.scatter_2D(my_discretization._output_sample_set, filename = 'QoI_Samples.eps')
-plotD.scatter_2D(my_discretization._output_probability_set, filename = 'Data_Space_Discretization.eps')
+plotD.scatter_2D(Partition_discretization._input_sample_set, filename = '3_Parameter_Space_Discretization.png')
+# plotD.scatter_2D(my_discretization._input_sample_set, filename = '0_Parameter_Input_Samples.png')
+plotD.scatter_2D(my_discretization._output_sample_set, filename = '0_QoI_Samples.png')
+plotD.scatter_2D(my_discretization._output_probability_set, filename = '1_Data_Space_Discretization.png')
 
 ########################################
 # Post-process the results
@@ -144,35 +148,21 @@ as lower-dimensional marginal plots generally have limited value in understandin
 the structure of a high dimensional non-parametric probability measure.
 '''
 # calculate 2d marginal probs
-(bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples,
-                                                        nbins = [30, 30])
+(bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples, nbins = [50, 50])
 
 # plot 2d marginals probs
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "validation_raw",
-                             file_extension = ".eps", plot_surface=False)
+plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution", file_extension = ".png", plot_surface=False)
 
-# smooth 2d marginals probs (optional)
-marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.1)
-
-# plot 2d marginals probs
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "validation_smooth",
-                             file_extension = ".eps", plot_surface=False)
+# smooth and plot 2d marginals probs (optional)
+marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.05)
+plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution_Smoothed", file_extension = ".png", plot_surface=False)
 
 # calculate 1d marginal probs
-(bins, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples,
-                                                        nbins = [30, 30])
+(bins, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples, nbins = [50, 50])
 
-# plot 2d marginal probs
-plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "validation_raw",
-                             file_extension = ".eps")
+# plot 1d marginal probs
+plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "4_Recovered_Distribution", file_extension = ".png")
 
-# smooth 1d marginal probs (optional)
+# smooth and plot 1d marginal probs (optional)
 marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
-
-# plot 2d marginal probs
-plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "validation_smooth",
-                             file_extension = ".eps")
-
-
-
-
+plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "4_Recovered_Distribution_Smoothed", file_extension = ".png")
