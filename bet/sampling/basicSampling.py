@@ -422,3 +422,40 @@ class sampler(object):
 
         return self.compute_QoI_and_create_discretization(input_sample_set, 
                 savefile, parallel, globalize)
+                
+    def create_regular_discretization(self, input_obj,
+            savefile=None, num_samples_per_dim=None, criterion='center',
+            parallel=False, globalize=True):
+        """
+        Sampling algorithm that imposes a regular grid on the input space
+
+        .. note:: 
+        
+            This function is designed only for generalized rectangles and
+            assumes a Lebesgue measure on the parameter space.
+
+        :param input_obj: Either a :class:`bet.sample.sample_set` object for an
+            input space, an array of min and max bounds for the input values
+            with ``min = input_domain[:, 0]`` and ``max = input_domain[:, 1]``,
+            or the dimension of an input space
+        :type input_obj: :class:`~bet.sample.sample_set`,
+            :class:`numpy.ndarray` of shape (ndim, 2), or :class: `int`
+        :param string savefile: filename to save discretization
+        :param int num_samples: N, number of samples (optional)
+        :param string criterion: latin hypercube criterion see
+            `PyDOE <http://pythonhosted.org/pyDOE/randomized.html>`_
+        :param bool parallel: Flag for parallel implementation.  Default value
+            is ``False``.
+        :param bool globalize: Makes local variables global. Only applies if
+            ``parallel==True``.
+
+        :rtype: :class:`~bet.sample.discretization`
+        :returns: :class:`~bet.sample.discretization` object which contains
+            input and output sample sets with ``num_samples`` total samples
+
+        """
+        input_sample_set = self.regular_sample_set(input_obj,
+                num_samples_per_dim, criterion, globalize)
+
+        return self.compute_QoI_and_create_discretization(input_sample_set, 
+                savefile, parallel, globalize)
