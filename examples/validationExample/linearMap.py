@@ -154,8 +154,8 @@ the structure of a high dimensional non-parametric probability measure.
 plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution", file_extension = ".png", plot_surface=False)
 
 # smooth and plot 2d marginals probs (optional)
-marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.05)
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution_Smoothed", file_extension = ".png", plot_surface=False)
+# marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.05)
+# plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution_Smoothed", file_extension = ".png", plot_surface=False)
 
 # calculate 1d marginal probs
 (bins, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples, nbins = [50, 50])
@@ -164,5 +164,5 @@ plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Rec
 plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "4_Recovered_Distribution", file_extension = ".png")
 
 # smooth and plot 1d marginal probs (optional)
-marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
-plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "4_Recovered_Distribution_Smoothed", file_extension = ".png")
+# marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
+# plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "4_Recovered_Distribution_Smoothed", file_extension = ".png")
