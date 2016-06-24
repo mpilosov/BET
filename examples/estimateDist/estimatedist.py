@@ -46,6 +46,11 @@ Emulated_Set = samp.sample_set(dim_input)
 Emulated_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
 Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
             size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
+            
+# Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+#             size=num_samples_emulate_data_space), np.random.beta(a=beta, b=alpha,
+#                         size=num_samples_emulate_data_space) ]) ))
+#               
 Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
 print 'Emulated Reference Sample Set Done'
 
@@ -71,7 +76,7 @@ simpleFunP.user_partition_user_distribution(My_Discretization,
 calculateP.prob(My_Discretization)
 
 # visualize
-plotD.scatter_2D(My_Discretization)
+# plotD.scatter_2D(Emulated_Set)
 (bins, marginals2D) = plotP.calculate_2D_marginal_probs(Input_Samples, nbins = [20, 20])
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution", file_extension = ".png", plot_surface=False)
+plotP.plot_2D_marginal_probs(marginals2D, bins, Input_Samples, filename = "3_Recovered_Distribution", file_extension = ".png", plot_surface=False)
 

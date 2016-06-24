@@ -148,7 +148,7 @@ as lower-dimensional marginal plots generally have limited value in understandin
 the structure of a high dimensional non-parametric probability measure.
 '''
 # calculate 2d marginal probs
-(bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples, nbins = [50, 50])
+(bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = [50, 50])
 
 # plot 2d marginals probs
 plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "3_Recovered_Distribution", file_extension = ".png", plot_surface=False)
