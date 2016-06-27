@@ -13,6 +13,67 @@ import bet.sensitivity.gradients as grad
 import bet.sensitivity.chooseQoIs as cqoi
 import bet.Comm as comm
 
+################################################################################
+# FUNCTION DEFINITIONS
+################################################################################
+
+def Hellinger(disc_A, disc_B):
+    """
+    disc_A = first reference measure
+    disc_B = second reference measure
+    """
+    setA = disc_A._input_sample_set
+    setB = disc_B._input_sample_set
+
+def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
+    
+    input_samples = My_Discretization._input_sample_set.copy() # might not need to?
+    output_samples = My_Discretization._output_sample_set.copy()
+    # Choose some QoI indices to solve the ivnerse problem with
+    output_samples._dim = len(QoI_indices)
+    output_samples.set_values(output_samples.get_values()[:, QoI_indices])
+
+    my_discretization = samp.discretization(input_sample_set=input_samples,
+                                            output_sample_set=output_samples)
+
+
+    partition_output_samples = Partition_Discretization._output_sample_set.copy()
+    partition_input_samples = Partition_Discretization._input_sample_set.copy()
+    partition_output_samples._dim = len(QoI_indices)
+    partition_output_samples.set_values(partition_output_samples.get_values()[:, QoI_indices])
+    partition_discretization = samp.discretization(input_sample_set=partition_input_samples,
+                                                   output_sample_set=partition_output_samples)
+
+    emulated_output_samples = Emulated_Discretization._output_sample_set.copy()
+    emulated_input_samples = Emulated_Discretization._input_sample_set.copy()
+    emulated_output_samples._dim = len(QoI_indices)
+    emulated_output_samples.set_values(emulated_output_samples.get_values()[:, QoI_indices])
+    emulated_discretization = samp.discretization(input_sample_set=emulated_input_samples,
+                                                   output_sample_set=emulated_output_samples)
+
+    # Compute the simple function approximation to the distribution on the data space of interest
+    simpleFunP.user_partition_user_distribution(my_discretization,
+                                                partition_discretization,
+                                                emulated_discretization)
+    print 'Density %d Computed'%(i+1)
+    
+    # Calculate probabilities
+    calculateP.prob(my_discretization)
+    print 'Probability %d Calculated'%(i+1)
+    return my_discretization
+    
+def my_model(parameter_samples):
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
+    return QoI_samples
+
+def identity_model(parameter_samples):
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
+    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
+    return QoI_samples
+################################################################################
+################################################################################
+
 
 np.random.seed(20)
 
@@ -20,7 +81,7 @@ dim_input = 2 # dimension of paramater space
 # dim_output = 3 # number of QoI
 
 num_samples_param_space = 1E5 # this is N
-grid_cells_per_dim = 10 # Discretizing the Data Space using a regular grid on the input space - this is = log_dim (M)
+grid_cells_per_dim = 4 # Discretizing the Data Space using a regular grid on the input space - this is = log_dim (M)
 num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*100 # 1E4 # this is P (think about how many bins we're discretizing with)
 dim_range = [0.0, 1.0]
 alpha = 5
@@ -38,7 +99,7 @@ eye = bsam.sampler(identity_model)
 # The partition set is drawn from a regular grid to represent 'possible observations'
 Partition_Set = samp.sample_set(dim_input)
 Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim-1, dim_input, axis=0))
+Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
 
 
 # The emulated set is drawn from a given density to represent 'likely observations'
@@ -58,11 +119,11 @@ simpleFunP.user_partition_user_distribution(Reference_Discretization,
                                             Reference_Emulation)
 
 Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
-samp.save_discretization(Reference_Discretization, file_name="(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
+samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
 
 (bins, ref_marginals2D) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = [grid_cells_per_dim, grid_cells_per_dim])
 plotP.plot_2D_marginal_probs(ref_marginals2D, bins, Reference_Discretization._input_sample_set, filename = "1_(%d,%d)_M%d_Reference_Distribution"%(alpha, beta, grid_cells_per_dim), file_extension = ".png", plot_surface=False)
-
+plotD.scatter_2D(Reference_Discretization._input_sample_set, filename='ReferenceInputs')
 
 # Sample from parameter space
 Input_Samples = samp.sample_set(dim_input)
@@ -113,7 +174,6 @@ print 'Best Sets Computed'
 # to use for inversion. This is the procedure in 'invert_using'
 Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
 Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-
 Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
 print 'Reference Sample Discretizations Created, Reference Density Computed'
 
@@ -121,7 +181,7 @@ for i in range(2): # Possible sets of QoI to choose
     QoI_indices = [i, i+1] # choose up to input_dim
 
     my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
-    samp.save_discretization(my_discretization, file_name="(%d,%d)_M%d_N%d_est_discretization_q%d"%(alpha, beta, grid_cells_per_dim**dim_input, num_samples_param_space, i))
+    samp.save_discretization(my_discretization, file_name="0_(%d,%d)_M%d_N%d_Estimated_Discretization_q%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, i))
     # VISUALIZATION
     # plotD.scatter_2D(Emulated_Set)
     (bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = [grid_cells_per_dim, grid_cells_per_dim])
@@ -142,64 +202,3 @@ for i in range(2): # Possible sets of QoI to choose
     # samples and ratio of the volume of the parameter domain they take up
     print (num_samples_in_inverse, np.sum(my_discretization._input_sample_set.get_volumes()[indices_in_inverse]))
     # This should be the number of samples you used
-
-################################################################################
-# FUNCTION DEFINITIONS
-################################################################################
-
-def Hellinger(disc_A, disc_B):
-    """
-    disc_A = first reference measure
-    disc_B = second reference measure
-    """
-    setA = disc_A._input_sample_set
-    setB = disc_B._input_sample_set
-    
-def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
-    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
-    return QoI_samples
-
-def identity_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
-    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
-    return QoI_samples
-
-def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
-    
-    input_samples = My_Discretization._input_sample_set.copy() # might not need to?
-    output_samples = My_Discretization._output_sample_set.copy()
-    # Choose some QoI indices to solve the ivnerse problem with
-    output_samples._dim = len(QoI_indices)
-    output_samples.set_values(output_samples.get_values()[:, QoI_indices])
-
-    my_discretization = samp.discretization(input_sample_set=input_samples,
-                                            output_sample_set=output_samples)
-
-
-    partition_output_samples = Partition_Discretization._output_sample_set.copy()
-    partition_input_samples = Partition_Discretization._input_sample_set.copy()
-    partition_output_samples._dim = len(QoI_indices)
-    partition_output_samples.set_values(partition_output_samples.get_values()[:, QoI_indices])
-    partition_discretization = samp.discretization(input_sample_set=partition_input_samples,
-                                                   output_sample_set=partition_output_samples)
-
-    emulated_output_samples = Emulated_Discretization._output_sample_set.copy()
-    emulated_input_samples = Emulated_Discretization._input_sample_set.copy()
-    emulated_output_samples._dim = len(QoI_indices)
-    emulated_output_samples.set_values(emulated_output_samples.get_values()[:, QoI_indices])
-    emulatied_discretization = samp.discretization(input_sample_set=emulation_input_samples,
-                                                   output_sample_set=emulated_output_samples)
-
-    # Compute the simple function approximation to the distribution on the data space of interest
-    simpleFunP.user_partition_user_distribution(my_discretization,
-                                                partition_discretization,
-                                                emulated_discretization)
-    print 'Density %d Computed'%(i+1)
-    
-    # Calculate probabilities
-    calculateP.prob(my_discretization)
-    print 'Probability %d Calculated'%(i+1)
-    return my_discretization
-    
-    
