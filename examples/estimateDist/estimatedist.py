@@ -59,11 +59,11 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
-    print '\t Density Evaluated'
+    # print '\t Density Evaluated'
     
     # Calculate probabilities
     calculateP.prob(my_discretization)
-    print '\t Probability Calculated\n'
+    # print '\t Probability Calculated\n'
     return my_discretization
     
 def my_model(parameter_samples):
@@ -94,14 +94,13 @@ def identity_model(parameter_samples):
 # save_disc = False
 # MC_assumption = True # (for your input samples)
 
-def generate_data(num_samples_param_space, grid_cells_per_dim, plotting_on = False, save_disc = False, MC_assumption = True ):
+def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, plotting_on = False, save_disc = False, MC_assumption = True ):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2
     num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*100
     dim_range = [0.0, 1.0]
     num_centers = 10
-    alpha = 1
-    beta = 1
+
     
     # Define the sampler that will be used to create the discretization
     # object, which is the fundamental object used by BET to compute
@@ -156,7 +155,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, plotting_on = Fal
         My_Discretization._input_sample_set.estimate_volume(n_mc_points=10*num_samples_param_space)
     else:
         My_Discretization._input_sample_set.estimate_volume_mc()
-    print 'Experimental Input Sample Discretization Created'
+    # print 'Experimental Input Sample Discretization Created'
 
 
 
@@ -194,12 +193,13 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, plotting_on = Fal
     Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
     Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
-    print 'Reference Sample Discretizations Created, Reference Density Computed'
+    # print 'Reference Sample Discretizations Created, Reference Density Computed'
     
     H = []
     for i in range(2): # Possible sets of QoI to choose
         QoI_indices = [i, i+1] # choose up to input_dim
-        print 'QoI Pair %d'%(i+1)
+        # print 'QoI Pair %d'%(i+1)
+        
         my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
         if save_disc == True:
             samp.save_discretization(my_discretization, file_name="0_(%d,%d)_M%d_N%d_Estimated_Discretization_q%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, i))
