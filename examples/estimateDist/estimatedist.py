@@ -27,8 +27,7 @@ def Hellinger(A, B):
     # print np.sqrt(1.0 - sum([ np.sqrt(A[i,j]*B[i,j]) for i in range(n) for j in range(n) ]))
     # A = A*(n**2)
     # B = B*(n**2)
-    print np.sqrt( 0.5*sum([ (np.sqrt(A[i,j]) - np.sqrt(B[i,j]))**2 for i in range(n) for j in range(n)]))
-    print '\n'
+    return np.sqrt( 0.5*sum([ (np.sqrt(A[i,j]) - np.sqrt(B[i,j]))**2 for i in range(n) for j in range(n)]))
 
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
     
