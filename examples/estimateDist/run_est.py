@@ -13,16 +13,16 @@ alpha = 1
 beta = 1
 
 num_sample_list = [25*2**n for n in range(7)]
-num_sample_list = [1E4]
-num_trials = 2
+num_sample_list = [40]
+num_trials = 1
 max_grid = 3
 
-for grid_cells_per_dim in range(3,max_grid+1,2):
+for grid_cells_per_dim in [3]: #range(3,max_grid+1,2):
     H_mean = []
     H_var = []
     print 'M = %4d'%(grid_cells_per_dim**2)
     for num_samples_param_space in num_sample_list:
-        # np.random.seed(num_samples_param_space*rand_mult)
+        np.random.seed(num_samples_param_space*rand_mult)
         H_temp = []
         for trial in range(num_trials):
             H_temp.append( generate_data(num_samples_param_space, grid_cells_per_dim, alpha, beta, plotting_on = True) )
@@ -51,7 +51,7 @@ for grid_cells_per_dim in range(3,max_grid+1,2):
     plt.xlabel('N')
     plt.ylabel('Variance')
     plt.xscale('log')
-    plt.yscale('log')
+    # plt.yscale('log')
     # plt.axis([20, 2000, 1E-8, 1E-1])
     plt.title( 'Variance in Hellinger Distances (%3d Trials ) as a \n Function of N for a Fixed M = %d'%(num_trials, grid_cells_per_dim**2 ) )
     # plt.show()
