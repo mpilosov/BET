@@ -27,7 +27,7 @@ def Hellinger(A, B):
     # print np.sqrt(1.0 - sum([ np.sqrt(A[i,j]*B[i,j]) for i in range(n) for j in range(n) ]))
     # A = A*(n**2)
     # B = B*(n**2)
-    return np.sqrt( 0.5*sum([ (np.sqrt(A[i,j]) - np.sqrt(B[i,j]))**2 for i in range(n) for j in range(n)]))
+    return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
     
@@ -67,7 +67,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [0.1, 0.9]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
@@ -124,8 +124,12 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
 
+
     # Create Reference Discretization against which you will compare approximations with N samples
-    Reference_Discretization = eye.compute_QoI_and_create_discretization(Partition_Set)
+    Reference_Set = samp.sample_set(dim_input)
+    Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    Reference_Discretization = eye.compute_QoI_and_create_discretization(Reference_Set)
     Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Reference_Emulation = eye.compute_QoI_and_create_discretization(Emulated_Set)
     simpleFunP.user_partition_user_distribution(Reference_Discretization, 
@@ -135,6 +139,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
+
 
     (bins, ref_marginals2D) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = [grid_cells_per_dim, grid_cells_per_dim])
     if plotting_on == True:
@@ -148,6 +153,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
+    # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
 
     # Estimate volumes of Voronoi cells associated with the parameter samples
@@ -194,7 +200,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     # print 'Reference Sample Discretizations Created, Reference Density Computed'
-    
+    print ref_marginals2D
     H = []
     for i in range(2): # Possible sets of QoI to choose
         QoI_indices = [i, i+1] # choose up to input_dim
@@ -206,6 +212,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
         # VISUALIZATION
         # plotD.scatter_2D(Emulated_Set)
         (bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = [grid_cells_per_dim, grid_cells_per_dim])
+        print marginals2D
         if plotting_on == True:
             plotP.plot_2D_marginal_probs(marginals2D, bins, my_discretization._input_sample_set, 
                             filename = "2_(%d,%d)_M%d_N%d_Recovered_Distribution_q(%d,%d)"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, QoI_indices[0], QoI_indices[1]), 
