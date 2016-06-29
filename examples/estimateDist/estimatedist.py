@@ -69,10 +69,10 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     # print '========================================================'
     # Calculate probabilities
     calculateP.prob(my_discretization)
-    print '========================================================'
-    print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
-    print ' estimated marginal: '
-    print '========================================================'
+    # print '========================================================'
+    # print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
+    # print ' estimated marginal: '
+    # print '========================================================'
     # print '\t Probability Calculated\n'
     return my_discretization
     
@@ -149,7 +149,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
     # print '========================================================'
     # print '========================================================'
-    print Reference_Discretization._input_sample_set._values
+    # print Reference_Discretization._input_sample_set._values
     # print '========================================================'
     # print '========================================================'
     
@@ -217,7 +217,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     #Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     # print 'Reference Sample Discretizations Created, Reference Density Computed'
-    print ref_marginals2D
+    # print ref_marginals2D
     H = []
     for i in range(2): # Possible sets of QoI to choose
         QoI_indices = [i, i+1] # choose up to input_dim
@@ -229,7 +229,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
         # VISUALIZATION
         # plotD.scatter_2D(Emulated_Set)
         (bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = grid_cells_per_dim)
-        print marginals2D
+        # print marginals2D
         if plotting_on == True:
             plotP.plot_2D_marginal_probs(marginals2D, bins, my_discretization._input_sample_set, 
                             filename = "2_(%d,%d)_M%d_N%d_Recovered_Distribution_q(%d,%d)"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, QoI_indices[0], QoI_indices[1]), 
