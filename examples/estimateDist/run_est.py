@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 rand_mult = 1 # random multiplier to test out sensitivity to randomness
 # num_samples_param_space = 1E4 # this is N
 # grid_cells_per_dim = 5 # Discretizing the Data Space using a regular grid on the input space - this is = log_dim (M)
-plotting_on = False
+plotting_on = True
 save_disc = False
 MC_assumption = True # (for your input samples)
 alpha = 1

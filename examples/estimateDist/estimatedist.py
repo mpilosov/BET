@@ -60,13 +60,13 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
                                                 partition_discretization,
                                                 emulated_discretization)
     # print '\t Density Evaluated'
-    print '========================================================'
-    print my_discretization._output_probability_set._values
-    print '========================================================'
-    
-    print '========================================================'
-    print [my_discretization._input_sample_set._values]
-    print '========================================================'
+    # print '========================================================'
+    # print my_discretization._output_probability_set._values
+    # print '========================================================'
+    # 
+    # print '========================================================'
+    # print [my_discretization._input_sample_set._values]
+    # print '========================================================'
     # Calculate probabilities
     calculateP.prob(my_discretization)
     print '========================================================'
@@ -147,11 +147,11 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
                                                 Reference_Emulation)
 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
-    print '========================================================'
-    print '========================================================'
-    print Reference_Discretization._input_sample_set._values
-    print '========================================================'
-    print '========================================================'
+    # print '========================================================'
+    # print '========================================================'
+    # print Reference_Discretization._input_sample_set._values
+    # print '========================================================'
+    # print '========================================================'
     
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
@@ -169,8 +169,8 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
-    Input_Samples.estimate_volume_mc()
     # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    Input_Samples.estimate_volume_mc()
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
 
     # Estimate volumes of Voronoi cells associated with the parameter samples
