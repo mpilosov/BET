@@ -149,7 +149,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
     # print '========================================================'
     # print '========================================================'
-    # print Reference_Discretization._input_sample_set._values
+    print Reference_Discretization._input_sample_set._values
     # print '========================================================'
     # print '========================================================'
     
