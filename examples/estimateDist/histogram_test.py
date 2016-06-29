@@ -82,11 +82,11 @@ simpleFunP.user_partition_user_distribution(My_Discretization,
                                             Emulated_Discretization)
 calculateP.prob(My_Discretization)                                            
 
-print '\nInverse Problem, Probabilities:'
+print '\nInverse Problem:\n Probabilities:'
 print My_Discretization._input_sample_set._probabilities_local
 print 'Pointer:'
 print My_Discretization._io_ptr_local
-print '\nInvere Solution Marginal'
+print '\n Inverse Solution Marginal'
 # print marginals for comparison
 (bins, marginals2D) = plotP.calculate_2D_marginal_probs(My_Discretization._input_sample_set, nbins = grid_cells_per_dim)
 print marginals2D[(0, 1)]
