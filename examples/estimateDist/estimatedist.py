@@ -31,7 +31,7 @@ def Hellinger(A, B):
 
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
     
-    input_samples = My_Discretization._input_sample_set.copy() # might not need to?
+    input_samples = My_Discretization._input_sample_set#.copy() # might not need to copy?
     output_samples = My_Discretization._output_sample_set.copy()
     # Choose some QoI indices to solve the ivnerse problem with
     output_samples._dim = len(QoI_indices)
@@ -39,8 +39,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
 
     my_discretization = samp.discretization(input_sample_set=input_samples,
                                             output_sample_set=output_samples)
-
-
+    
     partition_output_samples = Partition_Discretization._output_sample_set.copy()
     partition_input_samples = Partition_Discretization._input_sample_set.copy()
     partition_output_samples._dim = len(QoI_indices)
@@ -59,6 +58,16 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
+    
+    ############################## DEBUG AREA ##################################
+    plotD.scatter_2D(my_discretization._output_sample_set, filename='ReferenceOutputs%d'%QoI_indices[0])
+    plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
+    plotD.scatter_2D(emulated_discretization._output_sample_set, filename='EmulatedOutputs%d'%QoI_indices[0])
+    # print partition_discretization._output_probability_set
+    samp.save_discretization(partition_discretization, file_name = 'PartitionDisc%d'%QoI_indices[0] )
+    # plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
+    ############################################################################
+    
     # print '\t Density Evaluated'
     # print '========================================================'
     # print my_discretization._output_probability_set._values
@@ -70,14 +79,14 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     # Calculate probabilities
     calculateP.prob(my_discretization)
     # print '========================================================'
-    # print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
+    print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
     # print ' estimated marginal: '
     # print '========================================================'
     # print '\t Probability Calculated\n'
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [0.1, 0.9]])
+    Q_map = np.array([[1.0, 1.0], [1.0, -1.0], [1.0, 0.0]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
@@ -129,9 +138,11 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     # The emulated set is drawn from a given density to represent 'likely observations'
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
-    Emulated_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
-                size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
+    Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
+    Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
+
+    # Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+    #             size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
 
 
@@ -141,7 +152,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
     Reference_Discretization = eye.compute_QoI_and_create_discretization(Reference_Set)
     Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-    Reference_Emulation = eye.compute_QoI_and_create_discretization(Emulated_Set)
+    Reference_Emulation = eye.compute_QoI_and_create_discretization(Emulated_Set.copy())
     simpleFunP.user_partition_user_distribution(Reference_Discretization, 
                                                 Reference_Discretization, 
                                                 Reference_Emulation)
@@ -155,7 +166,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
-
+    
 
     (bins, ref_marginals2D) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
     if plotting_on == True:
@@ -163,17 +174,28 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
                 filename = "1_(%d,%d)_M%d_Reference_Distribution"%(alpha, beta, grid_cells_per_dim), 
                 file_extension = ".png", plot_surface=False)
 
-    # plotD.scatter_2D(Reference_Discretization._input_sample_set, filename='ReferenceInputs')
 
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    ########################### DEBUG AREA #####################################
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
     # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    
+    plotD.scatter_2D(Reference_Discretization._output_sample_set, filename='ReferenceOutputs')
+    ############################################################################
     Input_Samples.estimate_volume_mc()
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
 
-    # Estimate volumes of Voronoi cells associated with the parameter samples
+    # These two objects are the ones we will use to construct our competing data-spaces.
+    # We make copies of them and restrict the output space to just the QoI indices we want 
+    # to use for inversion. This is the procedure in 'invert_using'
+    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
+    #Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
+    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
+    
+    # 
+    # # Estimate volumes of Voronoi cells associated with the parameter samples
     # if MC_assumption is False:
     #     My_Discretization._input_sample_set.estimate_volume(n_mc_points=10*num_samples_param_space)
     # else:
@@ -210,14 +232,10 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     # different sets of these QoIs.
 
 
-    # These two objects are the ones we will use to construct our competing data-spaces.
-    # We make copies of them and restrict the output space to just the QoI indices we want 
-    # to use for inversion. This is the procedure in 'invert_using'
-    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
-    #Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
+
     # print 'Reference Sample Discretizations Created, Reference Density Computed'
     # print ref_marginals2D
+    
     H = []
     for i in range(2): # Possible sets of QoI to choose
         QoI_indices = [i, i+1] # choose up to input_dim
