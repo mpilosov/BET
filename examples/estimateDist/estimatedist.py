@@ -59,18 +59,21 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 1.0], [1.0, -1.0], [1.0, 0.0]])
+    Q_map = np.array([[1.0, 1.0], [1.0, -1.0]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
 def generate_reference(dim_input, grid_cells_per_dim, alpha, beta, save_disc = True, save_plot = False):
     # Create Reference Discretization against which you will compare approximations with N samples
+    print 'Computing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
     Reference_Set = samp.sample_set(dim_input)
     Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    Reference_set.set_output_sample_set(Reference_Set._input_sample_set)
     Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
     
-    num_samples_emulate_data_space = grid_cells_per_dim**dim_input*100;
+    emulation_constant = 100
+    num_samples_emulate_data_space = grid_cells_per_dim**dim_input*emulation_constant;
     
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
@@ -78,31 +81,25 @@ def generate_reference(dim_input, grid_cells_per_dim, alpha, beta, save_disc = T
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
     # Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-    Reference_Emulation = eye.compute_QoI_and_create_discretization(Emulated_Set)
+    Reference_Emulation_Discretization = samp.discretization(Emulated_Set, Emulated_Set)
     simpleFunP.user_partition_user_distribution(Reference_Discretization, 
                                                 Reference_Discretization, 
-                                                Reference_Emulation)
+                                                Reference_Emulation_Discretization)
 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
     
-    (bins, ref_marginals2D) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
-    if save_plot == True:
-        plotP.plot_2D_marginal_probs(ref_marginals2D, bins, Reference_Discretization._input_sample_set, 
-                filename = "1_(%d,%d)_M%d_Reference_Distribution"%(alpha, beta, grid_cells_per_dim), 
-                file_extension = ".png", plot_surface=False)
-    return
+    return Reference_Discretization
 
 
-def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, plotting_on = False, save_disc = False, MC_assumption = True ):
+def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2
     num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*100
     dim_range = [0.0, 1.0]
-    num_centers = 10
     
-    # Define the sampler that will be used to create the discretization object
+    # Define the sampler that will be used to create the discretization object - 2D for now only.
     sampler = bsam.sampler(my_model)
 
     # Initialize sample objects and discretizations that we will be using.
@@ -110,8 +107,8 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Partition_Set = samp.sample_set(dim_input)
     Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-
-
+    # Partition_Set.estimate_volume_mc()
+    
     # The emulated set is drawn from a given density to represent 'likely observations'
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
@@ -119,42 +116,16 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
-
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
     Input_Samples.estimate_volume_mc()
     # Input_Samples.estimate_volume(n_mc_points=100*num_samples_param_space)
+    
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
-
-    # These two objects are the ones we will use to construct our competing data-spaces.
-    # We make copies of them and restrict the output space to just the QoI indices we want 
-    # to use for inversion. This is the procedure in 'invert_using'
     Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
     #Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
-
     
-    H = [] # vector to store Hellinger Distances.
-    # TODO enumerate all possible choices of QoI maps. -- or change my_model each time? 
-    for i in range(2): # Possible sets of QoI to choose
-        QoI_indices = [i, i+1] # choose up to input_dim
-        # print 'QoI Pair %d'%(i+1)
-        
-        my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
-        
-        if save_disc == True:
-            samp.save_discretization(my_discretization, file_name="0_(%d,%d)_M%d_N%d_Estimated_Discretization_q%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, i))
-
-        (bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = grid_cells_per_dim)
-        
-        if plotting_on == True & i == 0:
-            plotP.plot_2D_marginal_probs(marginals2D, bins, my_discretization._input_sample_set, 
-                            filename = "2_(%d,%d)_M%d_N%d_Recovered_Distribution_q(%d,%d)"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, QoI_indices[0], QoI_indices[1]), 
-                            file_extension = ".png", plot_surface=False)
-
-        # marginals2D[(0,1)] yields a matrix of values.
-        H.append(Hellinger(marginals2D[(0,1)], ref_marginals2D[(0,1)]))
-
-    return H
+    return My_Discretization, Partition_Discretization, Emulated_Discretization
