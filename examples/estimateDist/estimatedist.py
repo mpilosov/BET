@@ -59,17 +59,18 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 1.0], [1.0, -1.0]])
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, -1.0]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
-def generate_reference(dim_input, grid_cells_per_dim, alpha, beta, save_disc = True, save_plot = False):
+def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_plot = False):
+    dim_input = 2
+    dim_range = [0.0, 1.0]
     # Create Reference Discretization against which you will compare approximations with N samples
-    print 'Computing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
+    print '\nComputing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
     Reference_Set = samp.sample_set(dim_input)
     Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    Reference_set.set_output_sample_set(Reference_Set._input_sample_set)
     Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
     
     emulation_constant = 100
