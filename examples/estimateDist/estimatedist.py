@@ -23,17 +23,17 @@ def Hellinger(A, B):
     B = second reference measure
     """
     n = len(A) # number of bins per dim (assuming regular grid)
-    
+    # Alternative (less computationally stable?) method of computing distance
     # print np.sqrt(1.0 - sum([ np.sqrt(A[i,j]*B[i,j]) for i in range(n) for j in range(n) ]))
-    # A = A*(n**2)
+    # A = A*(n**2) # still not entirely convinced these aren't necessary. 
     # B = B*(n**2)
     return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
-    
+    # Choose some QoI indices to solve the ivnerse problem with
     input_samples = My_Discretization._input_sample_set#.copy() # might not need to copy?
     output_samples = My_Discretization._output_sample_set.copy()
-    # Choose some QoI indices to solve the ivnerse problem with
+    
     output_samples._dim = len(QoI_indices)
     output_samples.set_values(output_samples.get_values()[:, QoI_indices])
 
@@ -58,31 +58,8 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
-    
-    ############################## DEBUG AREA ##################################
-    plotD.scatter_2D(my_discretization._output_sample_set, filename='ReferenceOutputs%d'%QoI_indices[0])
-    plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
-    plotD.scatter_2D(emulated_discretization._output_sample_set, filename='EmulatedOutputs%d'%QoI_indices[0])
-    # print partition_discretization._output_probability_set
-    samp.save_discretization(partition_discretization, file_name = 'PartitionDisc%d'%QoI_indices[0] )
-    # plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
-    ############################################################################
-    
-    # print '\t Density Evaluated'
-    # print '========================================================'
-    # print my_discretization._output_probability_set._values
-    # print '========================================================'
-    # 
-    # print '========================================================'
-    # print [my_discretization._input_sample_set._values]
-    # print '========================================================'
-    # Calculate probabilities
+
     calculateP.prob(my_discretization)
-    # print '========================================================'
-    print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
-    # print ' estimated marginal: '
-    # print '========================================================'
-    # print '\t Probability Calculated\n'
     return my_discretization
     
 def my_model(parameter_samples):
@@ -119,12 +96,8 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*100
     dim_range = [0.0, 1.0]
     num_centers = 10
-
     
-    # Define the sampler that will be used to create the discretization
-    # object, which is the fundamental object used by BET to compute
-    # solutions to the stochastic inverse problem
-    
+    # Define the sampler that will be used to create the discretization object
     sampler = bsam.sampler(my_model)
     eye = bsam.sampler(identity_model)
 
@@ -139,10 +112,8 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
-
-    # Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
-    #             size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
+    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+                size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
 
 
@@ -158,12 +129,6 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
                                                 Reference_Emulation)
 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
-    # print '========================================================'
-    # print '========================================================'
-    # print Reference_Discretization._input_sample_set._values
-    # print '========================================================'
-    # print '========================================================'
-    
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
     
@@ -242,12 +207,12 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
         # print 'QoI Pair %d'%(i+1)
         
         my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
+        
         if save_disc == True:
             samp.save_discretization(my_discretization, file_name="0_(%d,%d)_M%d_N%d_Estimated_Discretization_q%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, i))
-        # VISUALIZATION
-        # plotD.scatter_2D(Emulated_Set)
+
         (bins, marginals2D) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = grid_cells_per_dim)
-        # print marginals2D
+        
         if plotting_on == True:
             plotP.plot_2D_marginal_probs(marginals2D, bins, my_discretization._input_sample_set, 
                             filename = "2_(%d,%d)_M%d_N%d_Recovered_Distribution_q(%d,%d)"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, QoI_indices[0], QoI_indices[1]), 
@@ -255,16 +220,5 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
 
         # marginals2D[(0,1)] yields a matrix of values.
         H.append(Hellinger(marginals2D[(0,1)], ref_marginals2D[(0,1)]))
-        # 
-        # percentile = 1.0
-        # # Sort samples by highest probability density and find how many samples lie in
-        # # the support of the inverse solution.  With the Monte Carlo assumption, this
-        # # also tells us the approximate volume of this support.
-        # (num_samples_in_inverse, _, indices_in_inverse) =\
-        #     postTools.sample_highest_prob(top_percentile=percentile,
-        #     sample_set=my_discretization._input_sample_set, sort=True)
-        # print 'Post-Processing Done'
-        # # Print the number of samples that make up the highest percentile percent
-        # # samples and ratio of the volume of the parameter domain they take up
-        # print (num_samples_in_inverse, np.sum(my_discretization._input_sample_set.get_volumes()[indices_in_inverse]))
+
     return H
