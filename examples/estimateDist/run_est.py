@@ -6,18 +6,19 @@ from matplotlib import pyplot as plt
 rand_mult = 1 # random multiplier to test out sensitivity to randomness
 # num_samples_param_space = 1E4 # this is N
 # grid_cells_per_dim = 5 # Discretizing the Data Space using a regular grid on the input space - this is = log_dim (M)
+# MC_assumption = True # (for your input samples)
+
 save_plots = False
 save_ref_plot = False
 save_disc = False
 save_ref_disc = False
-MC_assumption = True # (for your input samples)
-alpha = 20
-beta = 20
+alpha = 1
+beta = 1
 
 num_sample_list = [25*2**n for n in range(9)]
 max_grid = 10
 num_discr_list = range(3,max_grid+1,1)
-num_trials = 3
+num_trials = 50
 H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
 QoI_choice_list = [[0, 1]]
 
