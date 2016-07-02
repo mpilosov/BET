@@ -56,6 +56,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
                                                 emulated_discretization)
 
     calculateP.prob(my_discretization)
+    
     return my_discretization
     
 def my_model(parameter_samples):
@@ -63,28 +64,36 @@ def my_model(parameter_samples):
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
+def identity_model(parameter_samples):
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
+    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
+    return QoI_samples
+    
 def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, save_ref_plot = False):
     dim_input = 2
     dim_range = [0.0, 1.0]
+    emulation_constant = 100
+    num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*emulation_constant
+    eye = bsam.sampler(identity_model)
+
     # Create Reference Discretization against which you will compare approximations with N samples
     print '\nComputing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
     Reference_Set = samp.sample_set(dim_input)
     Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
+    # Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
+    Reference_Discretization = eye.compute_QoI_and_create_discretization(Reference_Set)
     
-    emulation_constant = 100
-    num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*emulation_constant;
-    
-    np.random.seed(grid_cells_per_dim)
+    # np.random.seed(grid_cells_per_dim)
     
     Emulated_Set = samp.sample_set(dim_input)
-    Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    Emulated_Set.set_values(0.3 + 0.1*np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+    Emulated_Set.set_domain(np.repeat([[0.1, 0.2]], dim_input, axis=0))
+    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
-    # Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-    Reference_Emulation_Discretization = samp.discretization(Emulated_Set, Emulated_Set)
+    Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
+    # Reference_Emulation_Discretization = samp.discretization(Emulated_Set, Emulated_Set)
+    Reference_Emulation_Discretization = eye.compute_QoI_and_create_discretization(Emulated_Set)
     simpleFunP.user_partition_user_distribution(Reference_Discretization, 
                                                 Reference_Discretization, 
                                                 Reference_Emulation_Discretization)
@@ -119,10 +128,11 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     # The emulated set is drawn from a given density to represent 'likely observations'
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
-    Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    Emulated_Set.set_values(0.3 + 0.1*np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+    Emulated_Set.set_domain(np.repeat([[0.1, 0.2]], dim_input, axis=0))
+    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
-
+    print Emulated_Set._values
+    
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))

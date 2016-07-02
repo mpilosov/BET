@@ -9,6 +9,7 @@ rand_mult = 1 # random multiplier to test out sensitivity to randomness
 save_plots = True
 save_ref_plot = True
 save_disc = False
+save_ref_disc = False
 MC_assumption = True # (for your input samples)
 alpha = 1
 beta = 1
@@ -23,7 +24,7 @@ for grid_cells_per_dim in range(3,max_grid+1,2):
 
     # print 'M = %4d'%(grid_cells_per_dim)
     
-    Reference_Discretization = generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = False, save_ref_plot = True)
+    Reference_Discretization = generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
     (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
     
     for num_samples_param_space in num_sample_list:
