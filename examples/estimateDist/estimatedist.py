@@ -27,7 +27,7 @@ def Hellinger(A, B):
 
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
     # Choose some QoI indices to solve the ivnerse problem with
-    input_samples = My_Discretization._input_sample_set#.copy() # might not need to copy?
+    input_samples = My_Discretization._input_sample_set.copy() # might not need to copy?
     output_samples = My_Discretization._output_sample_set.copy()
     
     output_samples._dim = len(QoI_indices)
@@ -74,7 +74,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_p
     Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
     
     emulation_constant = 100
-    num_samples_emulate_data_space = grid_cells_per_dim**dim_input*emulation_constant;
+    num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*emulation_constant;
     
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
@@ -90,7 +90,9 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_p
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
     if save_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
-    
+    if save_plot == True:
+        (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
+        # TODO add printing code 
     return Reference_Discretization
 
 

@@ -13,16 +13,16 @@ alpha = 1
 beta = 1
 
 num_sample_list = [25*2**n for n in range(7)]
-max_grid = 5
+max_grid = 3
 num_discr_list = range(3,max_grid+1,2)
 num_trials = 10
 H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
-QoI_choice_list = [[0, 1], [1, 2]]
+QoI_choice_list = [[0, 1]]
 for grid_cells_per_dim in range(3,max_grid+1,2):
 
     # print 'M = %4d'%(grid_cells_per_dim)
     
-    Reference_Discretization = generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_plot = False)
+    Reference_Discretization = generate_reference(grid_cells_per_dim, alpha, beta, save_disc = False, save_plot = False)
     (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
     
     for num_samples_param_space in num_sample_list:
@@ -44,6 +44,7 @@ for grid_cells_per_dim in range(3,max_grid+1,2):
         print '\t', 'mean for N = %4d:'%num_samples_param_space, H[grid_cells_per_dim][num_samples_param_space]['stats'][0]
         # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
 np.save('dict_results.npy',H)
+print H
 '''
 plt.cla()
 lines = plt.plot(num_sample_list, H_mean[:,0], 'k--', num_sample_list, H_mean[:,1],'b:')
