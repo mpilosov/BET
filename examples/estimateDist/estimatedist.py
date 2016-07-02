@@ -139,10 +139,10 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.1, 0.2]], dim_input, axis=0))
-    Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    # Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
 
-    # Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
-    #             size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
+    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+                size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
 
 
