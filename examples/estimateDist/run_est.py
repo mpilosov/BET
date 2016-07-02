@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 rand_mult = 1 # random multiplier to test out sensitivity to randomness
 # num_samples_param_space = 1E4 # this is N
 # grid_cells_per_dim = 5 # Discretizing the Data Space using a regular grid on the input space - this is = log_dim (M)
-save_plots = True
-save_ref_plot = True
+save_plots = False
+save_ref_plot = False
 save_disc = False
 save_ref_disc = False
 MC_assumption = True # (for your input samples)
@@ -17,23 +17,23 @@ beta = 1
 num_sample_list = [25*2**n for n in range(5)]
 max_grid = 3
 num_discr_list = range(3,max_grid+1,2)
-num_trials = 2
+num_trials = 3
 H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
 QoI_choice_list = [[0, 1]]
 for grid_cells_per_dim in range(3,max_grid+1,2):
 
     # print 'M = %4d'%(grid_cells_per_dim)
     
-    Reference_Discretization = generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
+    Reference_Discretization, Partition_Set, Emulated_Set = generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
     (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
     
     for num_samples_param_space in num_sample_list:
-        np.random.seed(num_samples_param_space*rand_mult)
+        # np.random.seed(num_samples_param_space*rand_mult)
         H_temp = np.zeros((num_trials, len(QoI_choice_list)))
         # rand_int = np.random.randint(num_trials) # print out one random recovered distribution
         for trial in range(num_trials):
             My_Discretization, Partition_Discretization, Emulated_Discretization = \
-                generate_discretizations( num_samples_param_space, grid_cells_per_dim, alpha, beta)
+                generate_discretizations( Partition_Set, Emulated_Set, num_samples_param_space, alpha, beta)
                 
             for qoi_choice_idx in range(len(QoI_choice_list)):
                 QoI_indices = QoI_choice_list[qoi_choice_idx]

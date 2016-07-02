@@ -78,12 +78,12 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
 
     # Create Reference Discretization against which you will compare approximations with N samples
     print '\nComputing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
-    Reference_Set = samp.sample_set(dim_input)
-    Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
+    Partition_Set = samp.sample_set(dim_input)
+    Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    Reference_Discretization = samp.discretization(Partition_Set, Partition_Set)
     
-    # np.random.seed(grid_cells_per_dim)
+    np.random.seed(grid_cells_per_dim) # This yields consistent results.
     
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
@@ -105,32 +105,17 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
         plotP.plot_2D_marginal_probs(ref_marginal, bins, Reference_Discretization._input_sample_set, 
                     filename = "1_(%d,%d)_M%d_Reference_Distribution"%(alpha, beta, grid_cells_per_dim), 
                     file_extension = ".png", plot_surface=False)
-    return Reference_Discretization
+    return Reference_Discretization, Partition_Set, Emulated_Set
 
 
-def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1):
+def generate_discretizations(Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
     # initialize some variables you might pass as parameters later on.
-    dim_input = 2
-    num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*100
-    dim_range = [0.0, 1.0]
+    dim_input = 2 # definitely can pull this from partition_set
+    dim_range = [0.0, 1.0] # probably can pull this from partition_set 
     
     # Define the sampler that will be used to create the discretization object - 2D for now only.
     sampler = bsam.sampler(my_model)
     # np.random.seed(num_samples_param_space)
-    # Initialize sample objects and discretizations that we will be using.
-    # The partition set is drawn from a regular grid to represent 'possible observations'
-    Partition_Set = samp.sample_set(dim_input)
-    Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    
-    # The emulated set is drawn from a given density to represent 'likely observations'
-    # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
-    Emulated_Set = samp.sample_set(dim_input)
-    Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    # Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
-                size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
-
     
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
@@ -141,7 +126,6 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
     Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
-    #Partition_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     
     return My_Discretization, Partition_Discretization, Emulated_Discretization
