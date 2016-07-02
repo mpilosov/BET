@@ -81,8 +81,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     Reference_Set = samp.sample_set(dim_input)
     Reference_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Reference_Set = bsam.regular_sample_set(Reference_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    # Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
-    Reference_Discretization = eye.compute_QoI_and_create_discretization(Reference_Set)
+    Reference_Discretization = samp.discretization(Reference_Set, Reference_Set)
     
     # np.random.seed(grid_cells_per_dim)
     
@@ -91,10 +90,9 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     # Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
     Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
-
+    
     Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
-    # Reference_Emulation_Discretization = samp.discretization(Emulated_Set, Emulated_Set)
-    Reference_Emulation_Discretization = eye.compute_QoI_and_create_discretization(Emulated_Set)
+    Reference_Emulation_Discretization = samp.discretization(Emulated_Set, Emulated_Set)
     simpleFunP.user_partition_user_distribution(Reference_Discretization, 
                                                 Reference_Discretization, 
                                                 Reference_Emulation_Discretization)
@@ -124,7 +122,6 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     Partition_Set = samp.sample_set(dim_input)
     Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
-    # Partition_Set.estimate_volume_mc()
     
     # The emulated set is drawn from a given density to represent 'likely observations'
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
@@ -133,6 +130,7 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     # Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
     Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
+
     
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
