@@ -59,10 +59,6 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     
     return my_discretization
     
-def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 1.0], [0.0, 1.0]])
-    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
-    return QoI_samples
     
 def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, save_ref_plot = False):
     dim_input = 2
@@ -102,7 +98,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     return Reference_Discretization, Partition_Set, Emulated_Set
 
 
-def generate_model_discretizations(Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
+def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2 # definitely can pull this from partition_set
     dim_range = [0.0, 1.0] # probably can pull this from partition_set 
