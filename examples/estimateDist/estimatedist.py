@@ -59,7 +59,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, -1.0]])
+    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
@@ -80,7 +80,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+    Emulated_Set.set_values(0.3 + 0.1*np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
     # Reference_Discretization._input_sample_set.estimate_volume_mc() # The MC assumption is true.
@@ -120,7 +120,7 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
-    Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
+    Emulated_Set.set_values(0.3 + 0.1*np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
                 size=num_samples_emulate_data_space) for i in range(dim_input) ]) ))
 
     # Sample from parameter space

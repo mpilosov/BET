@@ -16,7 +16,7 @@ beta = 1
 num_sample_list = [25*2**n for n in range(5)]
 max_grid = 3
 num_discr_list = range(3,max_grid+1,2)
-num_trials = 1
+num_trials = 2
 H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
 QoI_choice_list = [[0, 1]]
 for grid_cells_per_dim in range(3,max_grid+1,2):
@@ -38,17 +38,17 @@ for grid_cells_per_dim in range(3,max_grid+1,2):
                 QoI_indices = QoI_choice_list[qoi_choice_idx]
                 my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
                 (bins, temp_marginal) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = grid_cells_per_dim)
-                if save_plots == True & trial == 0: # save only first random recovered distribution
+                if save_plots == True: # save only first random recovered distribution
                     plotP.plot_2D_marginal_probs(temp_marginal, bins, Reference_Discretization._input_sample_set, 
                                 filename = "1_(%d,%d)_M%d_N%d_Recovered_Distribution%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, qoi_choice_idx), 
-                                file_extension = ".png", plot_surface=True)
+                                file_extension = ".png", plot_surface=False)
                 H_temp[trial, qoi_choice_idx] = Hellinger(ref_marginal[(0,1)], temp_marginal[(0,1)])
         # print '\t %d Trials for N = %4d samples completed.\n'%(num_trials, num_samples_param_space)
         H[grid_cells_per_dim][num_samples_param_space]['data'] = H_temp
         H[grid_cells_per_dim][num_samples_param_space]['stats'] = [np.mean(H_temp, axis=0), np.var(H_temp, axis=0)]            
         print '\t', 'mean for N = %4d:'%num_samples_param_space, H[grid_cells_per_dim][num_samples_param_space]['stats'][0]
         # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
-np.save('dict_results.npy',H)
+# np.save('dict_results.npy',H)
 # print H
 '''
 plt.cla()
