@@ -60,12 +60,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     return my_discretization
     
 def my_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
-    QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
-    return QoI_samples
-
-def identity_model(parameter_samples):
-    Q_map = np.array([[1.0, 0.0], [0.0, 1.0]])
+    Q_map = np.array([[1.0, 1.0], [0.0, 1.0]])
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
     

@@ -11,16 +11,16 @@ save_ref_plot = False
 save_disc = False
 save_ref_disc = False
 MC_assumption = True # (for your input samples)
-alpha = 1
-beta = 1
+alpha = 20
+beta = 20
 
-num_sample_list = [25*2**n for n in range(5)]
-max_grid = 3
-num_discr_list = range(3,max_grid+1,2)
+num_sample_list = [25*2**n for n in range(7)]
+max_grid = 5
+num_discr_list = range(3,max_grid+1,1)
 num_trials = 3
 H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
 QoI_choice_list = [[0, 1]]
-for grid_cells_per_dim in range(3,max_grid+1,2):
+for grid_cells_per_dim in num_discr_list:
 
     # print 'M = %4d'%(grid_cells_per_dim)
     
