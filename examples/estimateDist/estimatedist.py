@@ -63,7 +63,7 @@ def my_model(parameter_samples):
     QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
     return QoI_samples
 
-def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_plot = False):
+def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, save_ref_plot = False):
     dim_input = 2
     dim_range = [0.0, 1.0]
     # Create Reference Discretization against which you will compare approximations with N samples
@@ -75,6 +75,8 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_p
     
     emulation_constant = 100
     num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*emulation_constant;
+    
+    np.random.seed(grid_cells_per_dim)
     
     Emulated_Set = samp.sample_set(dim_input)
     Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
@@ -88,11 +90,13 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_disc = True, save_p
                                                 Reference_Emulation_Discretization)
 
     Reference_Discretization._input_sample_set.set_probabilities(Reference_Discretization._output_probability_set._probabilities)
-    if save_disc == True:
+    if save_ref_disc == True:
         samp.save_discretization(Reference_Discretization, file_name="0_(%d,%d)_M%d_Reference_Discretization"%(alpha, beta, grid_cells_per_dim ))
-    if save_plot == True:
-        (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
-        # TODO add printing code 
+    if save_ref_plot == True:
+        (bins, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = grid_cells_per_dim)
+        plotP.plot_2D_marginal_probs(ref_marginal, bins, Reference_Discretization._input_sample_set, 
+                    filename = "1_(%d,%d)_M%d_Reference_Distribution"%(alpha, beta, grid_cells_per_dim), 
+                    file_extension = ".png", plot_surface=False)
     return Reference_Discretization
 
 
@@ -104,7 +108,7 @@ def generate_discretizations(num_samples_param_space, grid_cells_per_dim, alpha=
     
     # Define the sampler that will be used to create the discretization object - 2D for now only.
     sampler = bsam.sampler(my_model)
-
+    # np.random.seed(num_samples_param_space)
     # Initialize sample objects and discretizations that we will be using.
     # The partition set is drawn from a regular grid to represent 'possible observations'
     Partition_Set = samp.sample_set(dim_input)
