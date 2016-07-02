@@ -60,11 +60,11 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
                                                 emulated_discretization)
     
     ############################## DEBUG AREA ##################################
-    plotD.scatter_2D(my_discretization._output_sample_set, filename='ReferenceOutputs%d'%QoI_indices[0])
-    plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
-    plotD.scatter_2D(emulated_discretization._output_sample_set, filename='EmulatedOutputs%d'%QoI_indices[0])
+    # plotD.scatter_2D(my_discretization._output_sample_set, filename='ReferenceOutputs%d'%QoI_indices[0])
+    # plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
+    # plotD.scatter_2D(emulated_discretization._output_sample_set, filename='EmulatedOutputs%d'%QoI_indices[0])
     # print partition_discretization._output_probability_set
-    samp.save_discretization(partition_discretization, file_name = 'PartitionDisc%d'%QoI_indices[0] )
+    # samp.save_discretization(partition_discretization, file_name = 'PartitionDisc%d'%QoI_indices[0] )
     # plotD.scatter_2D(partition_discretization._output_sample_set, filename='PartitionOutputs%d'%QoI_indices[0])
     ############################################################################
     
@@ -79,7 +79,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     # Calculate probabilities
     calculateP.prob(my_discretization)
     # print '========================================================'
-    print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
+    # print [ my_discretization._input_sample_set._probabilities_local, my_discretization._io_ptr_local]
     # print ' estimated marginal: '
     # print '========================================================'
     # print '\t Probability Calculated\n'
@@ -138,7 +138,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     # The emulated set is drawn from a given density to represent 'likely observations'
     # TODO add in functionality here to change the distribution - look at dim_range (maybe add 'support_range')
     Emulated_Set = samp.sample_set(dim_input)
-    Emulated_Set.set_domain(np.repeat([[0.0, 1.0]], dim_input, axis=0))
+    Emulated_Set.set_domain(np.repeat([[0.1, 0.2]], dim_input, axis=0))
     Emulated_Set = bsam.regular_sample_set(Emulated_Set, num_samples_per_dim = 3*np.repeat(grid_cells_per_dim, dim_input, axis=0))
 
     # Emulated_Set.set_values(np.array( np.transpose([ np.random.beta(a=alpha, b=beta,
@@ -182,7 +182,7 @@ def generate_data(num_samples_param_space, grid_cells_per_dim, alpha=1, beta=1, 
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
     # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
     
-    plotD.scatter_2D(Reference_Discretization._output_sample_set, filename='ReferenceOutputs')
+    # plotD.scatter_2D(Reference_Discretization._output_sample_set, filename='ReferenceOutputs')
     ############################################################################
     Input_Samples.estimate_volume_mc()
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
