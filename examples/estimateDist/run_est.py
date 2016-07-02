@@ -33,7 +33,7 @@ for grid_cells_per_dim in range(3,max_grid+1,2):
         # rand_int = np.random.randint(num_trials) # print out one random recovered distribution
         for trial in range(num_trials):
             My_Discretization, Partition_Discretization, Emulated_Discretization = \
-                generate_discretizations( Partition_Set, Emulated_Set, num_samples_param_space, alpha, beta)
+                generate_model_discretizations( Partition_Set, Emulated_Set, num_samples_param_space, alpha, beta)
                 
             for qoi_choice_idx in range(len(QoI_choice_list)):
                 QoI_indices = QoI_choice_list[qoi_choice_idx]

@@ -74,7 +74,6 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     dim_range = [0.0, 1.0]
     emulation_constant = 100
     num_samples_emulate_data_space = (grid_cells_per_dim**dim_input)*emulation_constant
-    eye = bsam.sampler(identity_model)
 
     # Create Reference Discretization against which you will compare approximations with N samples
     print '\nComputing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
@@ -108,7 +107,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     return Reference_Discretization, Partition_Set, Emulated_Set
 
 
-def generate_discretizations(Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
+def generate_model_discretizations(Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2 # definitely can pull this from partition_set
     dim_range = [0.0, 1.0] # probably can pull this from partition_set 
