@@ -3,18 +3,24 @@ import numpy as np
 
 alpha = 1
 beta = 1
-num_trials = 50 # for each N
-theta = 0
-H = np.load('dict_results_theta_%d.npy'%theta)
-H = H.item()
-N_vec = [25*2**n for n in range(9)] # should save these into data file later on.
-max_grid = 10
-M_vec= range(3,max_grid+1,1)
+num_trials = 50 
+theta = 83
+compare = True
+for theta in  range(84,90):
+    if compare == True:
+        H = np.load('dict_comp_results_theta_%d.npy'%theta)
+    else:
+        H = np.load('dict_results_theta_%d.npy'%theta)
+    H = H.item()
+    N_vec = [25*2**n for n in range(9)] # should save these into data file later on.
+    max_grid = 10
+    M_vec= range(3,max_grid+1,1)
 
-H_mean = np.array([ [ H[M][N]['stats'][0] for N in N_vec] for M in M_vec]) # M down rows, N down columns
-H_var = np.array([ [ H[M][N]['stats'][1] for N in N_vec] for M in M_vec]) # M down rows, N down columns
-
-for var_or_mean in ['mean', 'var']:
+    H_mean = np.array([ [ H[M][N]['stats'][0] for N in N_vec] for M in M_vec]) # M down rows, N across columns
+    H_var = np.array([ [ H[M][N]['stats'][1] for N in N_vec] for M in M_vec]) # M down rows, N across columns
+    var_or_mean = 'mean'
+    # for var_or_mean in ['mean']:
+        
     for M_idx in range(len(M_vec)):
         M = M_vec[M_idx]
         plt.cla()
@@ -32,13 +38,14 @@ for var_or_mean in ['mean', 'var']:
         plt.ylabel('H')
         plt.xscale('log')
         plt.yscale('log')
-        # plt.axis([20, 2000, 1E-3, 1])
+        # plt.axis([20, 4000, 1E-4, 1])
         # plt.show()
         if var_or_mean == 'mean':
             plt.savefig('(%d,%d)_Theta_%d_Mean__M%d.png'%(alpha, beta, theta, M**2) )
         else:
             plt.savefig('(%d,%d)_Theta_%d_Variance__M%d.png'%(alpha, beta, theta, M**2) )
-
+            
+    plt.cla()
     for M_idx in range(len(M_vec)):
         M = M_vec[M_idx]
         # plt.cla()
@@ -54,10 +61,18 @@ for var_or_mean in ['mean', 'var']:
         plt.ylabel('H')
         plt.xscale('log')
         plt.yscale('log')
+        plt.axis([20, 4000, 5E-3, 1])
         # plt.axis([20, 2000, 1E-3, 1])
         # plt.show()
-    if var_or_mean == 'mean':
-        plt.savefig('(%d,%d)_Theta_%d_Mean_Comparison_M_all.png'%(alpha, beta, theta) )
+    if compare == True:
+        if var_or_mean == 'mean':
+            plt.savefig('C_(%d,%d)_Theta_%d_Mean_M_all.png'%(alpha, beta, theta) )
+        else:
+            plt.savefig('C_(%d,%d)_Theta_%d_Variance_M_all.png'%(alpha, beta, theta) )
+        plt.close('all')
     else:
-        plt.savefig('(%d,%d)_Theta_%d_Variance_Comparison_M_all.png'%(alpha, beta, theta) )
-    plt.close('all')
+        if var_or_mean == 'mean':
+            plt.savefig('(%d,%d)_Theta_%d_Mean_M_all.png'%(alpha, beta, theta) )
+        else:
+            plt.savefig('(%d,%d)_Theta_%d_Variance_M_all.png'%(alpha, beta, theta) )
+        plt.close('all')

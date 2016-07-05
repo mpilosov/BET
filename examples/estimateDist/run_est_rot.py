@@ -11,11 +11,11 @@ rand_mult = 1 # random multiplier to test out sensitivity to randomness
 # MC_assumption = True # (for your input samples)
 
 save_plots = False
-save_ref_plot = True
+save_ref_plot = False
 save_disc = False
 save_ref_disc = False
-alpha = 10
-beta = 10
+alpha = 1
+beta = 1
 
 num_sample_list = [25*2**n for n in range(9)]
 max_grid = 10
@@ -27,14 +27,13 @@ QoI_choice_list = [[0, 1]]
 def make_model(theta):
     theta_rad = theta*2*(np.pi)/360
     def my_model(parameter_samples):
-        Q_map = np.array([[1.0, 0.0], [np.cos(theta_rad), np.sin(theta_rad)]])
-        # Q_map = np.array( [ [np.cos(theta_rad), -np.sin(theta_rad)], [np.sin(theta_rad), np.cos(theta_rad)] ] )
-        # Q_map = np.array([[1.0, 0.0], [round(np.cos(theta),4), round(np.sin(theta),4)]])
+        Q_map = np.array( [ [np.cos(theta_rad), np.cos(theta_rad)-np.sin(theta_rad)], [np.sin(theta_rad), np.sin(theta_rad)-np.cos(theta_rad)] ] )
+        # fix 45 degree angle and rotate.
         QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
         return QoI_samples
     return my_model
 
-theta_range = np.linspace(0,90,15)
+theta_range = np.linspace(0,90,5)
 # theta_range = range(84,90)
 for theta in theta_range:
     my_model = make_model(theta)
@@ -71,4 +70,4 @@ for theta in theta_range:
             H[grid_cells_per_dim][num_samples_param_space]['stats'] = [np.mean(H_temp, axis=0), np.var(H_temp, axis=0)]            
             print '\t', 'mean for Theta = %d, N = %4d:'%(theta, num_samples_param_space), H[grid_cells_per_dim][num_samples_param_space]['stats'][0]
             # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
-    np.save('(%d,%d)_dict_results_theta_%d.npy'%(alpha, beta, theta), H)
+    np.save('rot/(%d,%d)_dict_rot_results_theta_%d.npy'%(alpha, beta, theta), H)
