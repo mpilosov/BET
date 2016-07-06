@@ -14,8 +14,8 @@ save_plots = False
 save_ref_plot = False
 save_disc = False
 save_ref_disc = False
-alpha = 10
-beta = 10
+alpha = 1
+beta = 1
 
 num_sample_list = [25*2**n for n in range(9)]
 max_grid = 10

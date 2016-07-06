@@ -14,8 +14,9 @@ N_vec = [25*2**n for n in range(9)]
 # theta_range = range(83,91)
 # theta_range = [0, 25, 45] # to demo that orthogonal maps are independent of rotation 
 # theta_range = [0, 22, 45, 67, 90] # to demo that a 45deg skew map rotated around shows symmetry
-theta_range = [0, 22, 45] # just the distinct ones
-# theta_range = [0, 5, 10, 15, 20, 22, 25] # TODO 
+# theta_range = [0, 22, 45] # just the distinct ones
+# theta_range = [0, 5, 10, 15, 20, 22, 25] 
+theta_range = [0, 10, 15, 20, 25]
 
 # theta_range = [22,67] # symmetric pairs shown here
 # theta_range = [0, 90] # and here. so something around 22 is the minimizer.
@@ -54,7 +55,8 @@ for M_idx in range(len(M_vec)):
     # plt.axis([20, 7500, 1E-3, 1])
     # plt.show()
     if var_or_mean == 'mean':
-        plt.axis([20, 7500, 1E-3, 1])
+        # plt.axis([20, 7500, 1E-3, 1]) # the usual
+        plt.axis([20, 7500, 1E-2, 1]) # good for (1,1)
         plt.savefig('rot/Skew_(%d,%d)_Mean_M%d.png'%(alpha, beta, M**2) )
     else:
         plt.axis([20, 7500, 1E-6, 1E-2])
