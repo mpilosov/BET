@@ -17,6 +17,8 @@ N_vec = [25*2**n for n in range(9)]
 # theta_range = [0, 22, 45] # just the distinct ones
 # theta_range = [0, 5, 10, 15, 20, 22, 25] 
 theta_range = [0, 10, 15, 20, 25]
+theta_range = [25, 30, 35, 40, 45]
+
 
 # theta_range = [22,67] # symmetric pairs shown here
 # theta_range = [0, 90] # and here. so something around 22 is the minimizer.
