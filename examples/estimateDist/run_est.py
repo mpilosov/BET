@@ -10,19 +10,19 @@ rand_mult = 1 # random multiplier to test out sensitivity to randomness
 
 # MC_assumption = True # (for your input samples)
 
-save_plots = False
 save_ref_plot = False
 save_disc = False
 save_ref_disc = False
-alpha = 1
-beta = 1
+
+alpha = 10
+beta = 10
 
 num_sample_list = [25*2**n for n in range(9)]
 max_grid = 6
 num_discr_list = range(3,max_grid+1,1)
-num_hell_bins = 3
+num_hell_bins_list = [2, 3, 4, 5, 6]
 num_trials = 50
-H = { i:{ j:{} for j in num_sample_list} for i in num_discr_list }
+H = {h:{ i:{ j:{} for j in num_sample_list} for i in num_discr_list } for h in num_hell_bins_list}
 QoI_choice_list = [[0, 1]]
 
 def make_model(theta):
@@ -35,9 +35,8 @@ def make_model(theta):
         return QoI_samples
     return my_model
 
-# theta_range = np.linspace(0,90,15)
-# theta_range = range(84,90)
-theta_range = [85]
+theta_range = [int(i) for i in np.floor( np.linspace(0,90,15)[:-1] )] + range(84,91)
+
 for theta in theta_range:
     my_model = make_model(theta)
 
@@ -46,19 +45,14 @@ for theta in theta_range:
         # print 'M = %4d'%(grid_cells_per_dim)
         
         Reference_Discretization, Partition_Set, Emulated_Set = generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
-        
-        (_, ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = num_hell_bins)
-######################### HELLINGER ON OUTPUT ######################################
-        # Troy states we can predict the thing to which we will converge without solving an IP with N samples.
-        # That implies in this code that this would be the place to do such a thing.
-        # We want to compare the density on the data space (so feed Reference_Discretization._input_sample_set, 
-        # since it's input probabilities are just its output probabilities) against WHAT, exactly? 
-        # (bins, out_marginal) = plotP.calculate_2D_marginal_probs(my_discretization._output_sample_set, nbins = num_hell_bins)
-        # print Hellinger(ref_marginal[(0,1)], ref_marginal[(0,1)])
-####################################################################################      
+        ref_marginal = {h:[] for h in num_hell_bins_list}
+        for num_hell_bins in num_hell_bins_list:
+            (_, temp_ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = num_hell_bins)
+            ref_marginal[num_hell_bins] = temp_ref_marginal
+            
         for num_samples_param_space in num_sample_list:
             np.random.seed(num_samples_param_space*rand_mult)
-            H_temp = np.zeros((num_trials, len(QoI_choice_list)))
+            H_temp = {h: np.zeros((num_trials, len(QoI_choice_list))) for h in num_hell_bins_list}
             # rand_int = np.random.randint(num_trials) # print out one random recovered distribution
             for trial in range(num_trials):
                 
@@ -67,18 +61,17 @@ for theta in theta_range:
                     
                 for qoi_choice_idx in range(len(QoI_choice_list)):
                     QoI_indices = QoI_choice_list[qoi_choice_idx]
+                    
                     my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
                     
-                    (bins, temp_marginal) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = num_hell_bins)
-      
-                    if save_plots == True: # save only first random recovered distribution
-                        plotP.plot_2D_marginal_probs(temp_marginal, bins, Reference_Discretization._input_sample_set, 
-                                    filename = "1_(%d,%d)_M%d_N%d_Recovered_Distribution%d"%(alpha, beta, grid_cells_per_dim, num_samples_param_space, qoi_choice_idx), 
-                                    file_extension = ".png", plot_surface=False)
-                    H_temp[trial, qoi_choice_idx] = Hellinger(ref_marginal[(0,1)], temp_marginal[(0,1)])
+                    for num_hell_bins in num_hell_bins_list:
+                        (bins, temp_marginal) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = num_hell_bins)
+                        H_temp[num_hell_bins][trial, qoi_choice_idx] = Hellinger(ref_marginal[num_hell_bins][(0,1)], temp_marginal[(0,1)])
             # print '\t %d Trials for N = %4d samples completed.\n'%(num_trials, num_samples_param_space)
-            H[grid_cells_per_dim][num_samples_param_space]['data'] = H_temp
-            H[grid_cells_per_dim][num_samples_param_space]['stats'] = [np.mean(H_temp, axis=0), np.var(H_temp, axis=0)]            
-            print '\t', 'mean for Theta = %d, N = %4d:'%(theta, num_samples_param_space), H[grid_cells_per_dim][num_samples_param_space]['stats'][0]
-            # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
-    np.save('base/(%d,%d)_hell_%d_theta_%d.npy'%(alpha, beta, num_hell_bins, theta), H)
+            for num_hell_bins in num_hell_bins_list: 
+                H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['data'] = H_temp[num_hell_bins] # Hellinger distances as a list (each trial)
+                H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['stats'] = [np.mean(H_temp[num_hell_bins], axis=0), np.var(H_temp[num_hell_bins], axis=0)]            
+            print '\t', 'mean for Theta = %d, N = %4d:'%(theta, num_samples_param_space), [ H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['stats'][0] for num_hell_bins in num_hell_bins_list]
+                # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
+        
+    np.save('base/(%d,%d)_theta_%d.npy'%(alpha, beta, theta), H)
