@@ -33,8 +33,8 @@ def make_model(theta):
         return QoI_samples
     return my_model
 
-theta_range = np.linspace(0,90,15)
-# theta_range = range(84,90)
+theta_range = np.linspace(0,90,5) # this should be enough to see that rotation doesn't matter.
+
 for theta in theta_range:
     my_model = make_model(theta)
 
