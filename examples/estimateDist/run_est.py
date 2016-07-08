@@ -14,13 +14,14 @@ save_ref_plot = False
 save_disc = False
 save_ref_disc = False
 
-alpha = 10
-beta = 10
+alpha = 1
+beta = 1
 
 num_sample_list = [25*2**n for n in range(9)]
 max_grid = 6
-num_discr_list = range(3,max_grid+1,1)
 num_hell_bins_list = [2, 3, 4, 5, 6]
+# num_discr_list = range(3,max_grid+1,1)
+num_discr_list = [2**n for n in range(1,5)]
 num_trials = 50
 H = {h:{ i:{ j:{} for j in num_sample_list} for i in num_discr_list } for h in num_hell_bins_list}
 QoI_choice_list = [[0, 1]]
