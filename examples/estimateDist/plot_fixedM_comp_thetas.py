@@ -13,7 +13,6 @@ M_vec = [3**n for n in range(1,4)]
 N_vec = [25*2**n for n in range(9)]
 # choose thetas to compare. can also just fix a theta value to get an individual line.
 theta_range = [int(i) for i in np.floor( np.linspace(0,90,15)[:-1] )] + range(84,91)
-theta_range = theta_range[:-3]
 num_hell_bins_list = [3]
 
 line_colors = np.linspace(0.8, 0, len(theta_range)) # LIGHT TO DARK - LOW to HIGH Theta
