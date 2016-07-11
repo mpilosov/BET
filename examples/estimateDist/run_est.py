@@ -17,9 +17,9 @@ save_ref_disc = False
 alpha = 1
 beta = 1
 
-num_sample_list = [25*2**n for n in range(9)]
-max_grid = 6
+num_sample_list = [25*2**n for n in range(10)]
 num_hell_bins_list = [2, 3, 4, 5, 6]
+max_grid = 6
 # num_discr_list = range(3,max_grid+1,1)
 num_discr_list = [2**n for n in range(1,5)]
 num_trials = 50
