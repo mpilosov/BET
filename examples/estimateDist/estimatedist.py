@@ -54,7 +54,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
-
+    print 'about to call prob'                                            
     calculateP.prob(my_discretization)
     
     return my_discretization
@@ -70,7 +70,7 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
     print '\nComputing Reference Discretization for M = %4d'%(grid_cells_per_dim**2)
     Partition_Set = samp.sample_set(dim_input)
     Partition_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0))
+    Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(grid_cells_per_dim, dim_input, axis=0) )
     Reference_Discretization = samp.discretization(Partition_Set, Partition_Set)
     
     np.random.seed(grid_cells_per_dim) # This yields consistent results.
@@ -97,6 +97,31 @@ def generate_reference(grid_cells_per_dim, alpha, beta, save_ref_disc = True, sa
                     file_extension = ".png", plot_surface=False)
     return Reference_Discretization, Partition_Set, Emulated_Set
 
+def generate_N_reference(my_model, N_grid_cells_per_dim, M_grid_cells_per_dim, alpha, beta, save_ref_disc = True, save_ref_plot = False):
+    _, Partition_Set, Emulated_Set = generate_reference(M_grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
+    
+    
+    # initialize some variables you might pass as parameters later on.
+    dim_input = 2 # definitely can pull this from partition_set
+    dim_range = [0.0, 1.0] # probably can pull this from partition_set 
+    
+    # Define the sampler that will be used to create the discretization object - 2D for now only.
+    sampler = bsam.sampler(my_model)
+    # np.random.seed(num_samples_param_space)
+    
+    # Sample from parameter space
+    Input_Samples = samp.sample_set(dim_input)
+    Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(N_grid_cells_per_dim, dim_input, axis=0) )
+    Input_Samples.estimate_volume_mc()
+    
+    My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
+    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
+    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
+    QoI_indices = [0, 1]
+    Reference_Discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
+    
+    return Reference_Discretization, Partition_Set, Emulated_Set 
 
 def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
     # initialize some variables you might pass as parameters later on.
@@ -111,6 +136,7 @@ def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_sa
     Input_Samples = samp.sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
     Input_Samples = bsam.random_sample_set('random', Input_Samples, num_samples = num_samples_param_space)
+    # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(np.int(np.sqrt(num_samples_param_space)), dim_input, axis=0) )
     Input_Samples.estimate_volume_mc()
     # Input_Samples.estimate_volume(n_mc_points=100*num_samples_param_space)
     

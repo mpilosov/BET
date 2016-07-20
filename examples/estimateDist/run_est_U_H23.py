@@ -27,9 +27,9 @@ H = {h:{ i:{ j:{} for j in num_sample_list} for i in num_discr_list } for h in n
 QoI_choice_list = [[0, 1]]
 
 def make_model(theta):
-    theta_rad = theta*2*(np.pi)/360
+    # theta_rad = theta*2*(np.pi)/360
     def my_model(parameter_samples):
-        Q_map = np.array([[1.0, 0.0], [np.cos(theta_rad), np.sin(theta_rad)]])
+        Q_map = np.array([[1.0, 0.0], [np.cos(theta), np.sin(theta)]])
         # Q_map = np.array( [ [np.cos(theta_rad), -np.sin(theta_rad)], [np.sin(theta_rad), np.cos(theta_rad)] ] )
         # Q_map = np.array([[1.0, 0.0], [round(np.cos(theta),4), round(np.sin(theta),4)]])
         QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
@@ -37,14 +37,15 @@ def make_model(theta):
     return my_model
 
 # H2s folder:
-skew_range = [n+1 for n in range(10)] # 1, 2, ... 10
+skew_range = [n+1 for n in range(10)] # 1, 2, ..., 10
 theta_range_rad = [ np.arcsin(1./s) for s in skew_range ]
 theta_range_deg = [t*360/(2*np.pi) for t in theta_range_rad ]
 # H2 folder:
 # theta_range = [int(i) for i in np.floor( np.linspace(0,90,15)[:-1] )] + range(84,91)
 
-for theta in theta_range_deg:
-    my_model = make_model(theta)
+for s in skew_range:
+    
+    my_model = make_model( np.arcsin(1./s) )
 
     for grid_cells_per_dim in num_discr_list:
 
@@ -77,7 +78,7 @@ for theta in theta_range_deg:
             for num_hell_bins in num_hell_bins_list: 
                 H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['data'] = H_temp[num_hell_bins] # Hellinger distances as a list (each trial)
                 H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['stats'] = [np.mean(H_temp[num_hell_bins], axis=0), np.var(H_temp[num_hell_bins], axis=0)]            
-            print '\t', 'mean for Theta = %d, N = %4d:'%(theta, num_samples_param_space), [ H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['stats'][0] for num_hell_bins in num_hell_bins_list]
+            print '\t', 'mean for Skew = %d, N = %4d:'%(s, num_samples_param_space), [ H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['stats'][0] for num_hell_bins in num_hell_bins_list]
                 # print '\t', 'var:', H[grid_cells_per_dim][num_samples_param_space]['stats'][1]
         
-    np.save('HS/(%d,%d)_theta_%d.npy'%(alpha, beta, theta), H)
+    np.save('HS/(%d,%d)_skew_%d.npy'%(alpha, beta, s), H)
