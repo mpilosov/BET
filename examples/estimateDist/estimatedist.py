@@ -25,7 +25,7 @@ def Hellinger(A, B):
     # B = B*(n**2)
     return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
-def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices):
+def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Choose some QoI indices to solve the ivnerse problem with
     input_samples = My_Discretization._input_sample_set.copy() # might not need to copy?
     output_samples = My_Discretization._output_sample_set.copy()
@@ -35,6 +35,8 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
 
     my_discretization = samp.discretization(input_sample_set=input_samples,
                                             output_sample_set=output_samples)
+    if Emulate is True:
+        my_discretization.set_emulated_input_sample_set(My_Discretization.get_emulated_input_sample_set().copy() )
     
     partition_output_samples = Partition_Discretization._output_sample_set.copy()
     partition_input_samples = Partition_Discretization._input_sample_set.copy()
@@ -54,9 +56,11 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
-    print 'about to call prob'                                            
-    calculateP.prob(my_discretization)
-    
+    if Emulate is True:
+        calculateP.prob_on_emulated_samples(my_discretization)
+    else: 
+        calculateP.prob(my_discretization)
+        
     return my_discretization
     
     
@@ -119,7 +123,38 @@ def generate_N_reference(my_model, N_grid_cells_per_dim, M_grid_cells_per_dim, a
     Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     QoI_indices = [0, 1]
-    Reference_Discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
+    
+    # Reference_Discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices)
+    # Choose some QoI indices to solve the ivnerse problem with
+    input_samples = My_Discretization._input_sample_set # might not need to copy?
+    output_samples = My_Discretization._output_sample_set.copy()
+    
+    output_samples._dim = len(QoI_indices)
+    output_samples.set_values(output_samples.get_values()[:, QoI_indices])
+
+    my_discretization = samp.discretization(input_sample_set=input_samples,
+                                            output_sample_set=output_samples)
+    
+    partition_output_samples = Partition_Discretization._output_sample_set.copy()
+    partition_input_samples = Partition_Discretization._input_sample_set
+    partition_output_samples._dim = len(QoI_indices)
+    partition_output_samples.set_values(partition_output_samples.get_values()[:, QoI_indices])
+    partition_discretization = samp.discretization(input_sample_set=partition_input_samples,
+                                                   output_sample_set=partition_output_samples)
+
+    emulated_output_samples = Emulated_Discretization._output_sample_set.copy()
+    emulated_input_samples = Emulated_Discretization._input_sample_set
+    emulated_output_samples._dim = len(QoI_indices)
+    emulated_output_samples.set_values(emulated_output_samples.get_values()[:, QoI_indices])
+    emulated_discretization = samp.discretization(input_sample_set=emulated_input_samples,
+                                                   output_sample_set=emulated_output_samples)
+
+    # Compute the simple function approximation to the distribution on the data space of interest
+    simpleFunP.user_partition_user_distribution(my_discretization,
+                                                partition_discretization,
+                                                emulated_discretization)
+    calculateP.prob(my_discretization)
+    Reference_Discretization = my_discretization
     
     return Reference_Discretization, Partition_Set, Emulated_Set 
 
@@ -139,8 +174,35 @@ def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_sa
     # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(np.int(np.sqrt(num_samples_param_space)), dim_input, axis=0) )
     Input_Samples.estimate_volume_mc()
     # Input_Samples.estimate_volume(n_mc_points=100*num_samples_param_space)
+    Emulated_Input_Samples = samp.sample_set(dim_input)
+    Emulated_Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    Emulated_Input_Samples = bsam.random_sample_set('random', Emulated_Input_Samples, num_samples = 1E5)
     
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
+    My_Discretization.set_emulated_input_sample_set(Emulated_Input_Samples)
+    
+    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
+    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
+    
+    return My_Discretization, Partition_Discretization, Emulated_Discretization
+    
+def generate_reg_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
+    # initialize some variables you might pass as parameters later on.
+    dim_input = 2 # definitely can pull this from partition_set
+    dim_range = [0.0, 1.0] # probably can pull this from partition_set 
+    
+    # Define the sampler that will be used to create the discretization object - 2D for now only.
+    sampler = bsam.sampler(my_model)
+    # np.random.seed(num_samples_param_space)
+    
+    # Sample from parameter space
+    Input_Samples = samp.sample_set(dim_input)
+    Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(np.int(np.sqrt(num_samples_param_space)), dim_input, axis=0) )
+    Input_Samples.estimate_volume_mc()
+    # Input_Samples.estimate_volume(n_mc_points=100*num_samples_param_space)
+    
+    My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)    
     Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
     Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     
