@@ -1,7 +1,6 @@
 # Copyright (C) 2014-2016 The BET Development Team
 
 from estimatedist import *
-from matplotlib import pyplot as plt
 
 rand_mult = 1 # random multiplier to test out sensitivity to randomness
 # num_samples_param_space = 1E4 # this is N

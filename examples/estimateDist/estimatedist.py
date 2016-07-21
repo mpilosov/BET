@@ -25,6 +25,18 @@ def Hellinger(A, B):
     # B = B*(n**2)
     return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
+num_integration_points = 1E5
+Integration_Sample_Set = samp.sample_set(dim_input)
+Integration_Sample_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
+Integration_Sample_Set = bsam.random_sample_set('random', Integration_Sample_Set, num_samples = num_integration_points)
+
+def em_Hellinger(A,B):
+    def Hellinger(Integration_Sample_Set, A, B):
+        """
+        A = first reference measure (input sample set)
+        B = second reference measure (input sample set)
+        """
+        
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Choose some QoI indices to solve the ivnerse problem with
     input_samples = My_Discretization._input_sample_set.copy() # might not need to copy?
