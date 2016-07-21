@@ -18,17 +18,17 @@ import bet.sample
 from bet.sample import sample_set
 from bet.sample import discretization as disc
 
-local_path = os.path.join(os.path.dirname(bet.__file__),
-    "../test/test_sampling")
+#local_path = os.path.join(os.path.dirname(bet.__file__),
+#    "../test/test_sampling")
+local_path = "test/test_sampling"
 
-@unittest.skipIf(comm.size > 1, 'Only run in serial')
 def test_loadmat_init():
     """
     Tests :meth:`bet.sampling.adaptiveSampling.loadmat` and
     :meth:`bet.sampling.adaptiveSampling.sampler.init`.
     """
     np.random.seed(1)
-    chain_length = 10
+    chain_length = 5
 
 
     mdat1 = {'num_samples':50, 'chain_length':chain_length}
@@ -37,14 +37,12 @@ def test_loadmat_init():
 
     my_input1 = sample_set(1)
     my_input1.set_values(np.random.random((50, 1)))
-    my_output = sample_set(1)
-    my_output.set_values(np.random.random((50, 1)))
+    my_output1 = sample_set(1)
+    my_output1.set_values(np.random.random((50, 1)))
     my_input2 = sample_set(1)
     my_input2.set_values(np.random.random((60, 1)))
-
-
-    sio.savemat(os.path.join(local_path, 'testfile1'), mdat1)
-    sio.savemat(os.path.join(local_path, 'testfile2'), mdat2)
+    my_output2 = sample_set(1)
+    my_output2.set_values(np.random.random((60, 1)))
 
     num_samples = np.array([50, 60])
     num_chains_pproc1, num_chains_pproc2 = np.ceil(num_samples/float(\
@@ -53,18 +51,27 @@ def test_loadmat_init():
         num_chains_pproc2])
     num_samples1, num_samples2 = chain_length * np.array([num_chains1,
         num_chains2])
+    
+    mdat1['num_chains'] = num_chains1
+    mdat1['kern_old'] = np.random.random((num_chains1,))
+    mdat1['step_ratios'] = np.random.random((num_samples[0],))
+    mdat2['num_chains'] = num_chains2
+    mdat2['kern_old'] = np.random.random((num_chains2,))
+    mdat2['step_ratios'] = np.random.random((num_samples[1],))
+    
+    sio.savemat(os.path.join(local_path, 'testfile1'), mdat1)
+    sio.savemat(os.path.join(local_path, 'testfile2'), mdat2)
 
-    bet.sample.save_discretization(disc(my_input1, my_output),
-            os.path.join(local_path, 'testfile1'))
-    bet.sample.save_discretization(disc(my_input2, None),
-            os.path.join(local_path, 'testfile2'))
-
-    (loaded_sampler1, discretization1) = asam.loadmat(os.path.join(local_path,
-        'testfile1'))
+    bet.sample.save_discretization(disc(my_input1, my_output1),
+            os.path.join(local_path, 'testfile1'), globalize=True)
+    bet.sample.save_discretization(disc(my_input2, my_output2),
+            os.path.join(local_path, 'testfile2'), globalize=True)
+    loaded_sampler1, discretization1, _, _ = asam.loadmat(os.path.join(local_path,
+        'testfile1'), hot_start=2)
     nptest.assert_array_equal(discretization1._input_sample_set.get_values(),
             my_input1.get_values())
     nptest.assert_array_equal(discretization1._output_sample_set.get_values(),
-            my_output.get_values())
+            my_output1.get_values())
     assert loaded_sampler1.num_samples == num_samples1
     assert loaded_sampler1.chain_length == chain_length
     assert loaded_sampler1.num_chains_pproc == num_chains_pproc1
@@ -73,21 +80,24 @@ def test_loadmat_init():
             loaded_sampler1.sample_batch_no)
     assert loaded_sampler1.lb_model == None
 
-    (loaded_sampler2, discretization2) = asam.loadmat(os.path.join(local_path,
-        'testfile2'), lb_model=model)
+    loaded_sampler2, discretization2, _, _ = asam.loadmat(os.path.join(local_path,
+        'testfile2'), lb_model=model, hot_start=2)
     nptest.assert_array_equal(discretization2._input_sample_set.get_values(),
             my_input2.get_values())
-    assert discretization2._output_sample_set is None    
     assert loaded_sampler2.num_samples == num_samples2
     assert loaded_sampler2.chain_length == chain_length
     assert loaded_sampler2.num_chains_pproc == num_chains_pproc2
     assert loaded_sampler2.num_chains == num_chains2
     nptest.assert_array_equal(np.repeat(range(num_chains2), chain_length, 0),
             loaded_sampler2.sample_batch_no)
-    if os.path.exists(os.path.join(local_path, 'testfile1.mat')):
-        os.remove(os.path.join(local_path, 'testfile1.mat'))
-    if os.path.exists(os.path.join(local_path, 'testfile2.mat')):
-        os.remove(os.path.join(local_path, 'testfile2.mat'))
+    nptest.assert_array_equal(discretization2._output_sample_set.get_values(),
+            my_output2.get_values())
+    comm.barrier()
+    if comm.rank == 0:
+        if os.path.exists(os.path.join(local_path, 'testfile1.mat')):
+            os.remove(os.path.join(local_path, 'testfile1.mat'))
+        if os.path.exists(os.path.join(local_path, 'testfile2.mat')):
+            os.remove(os.path.join(local_path, 'testfile2.mat'))
 
 def verify_samples(QoI_range, sampler, input_domain,
         t_set, savefile, initial_sample_type, hot_start=0):
@@ -115,23 +125,27 @@ def verify_samples(QoI_range, sampler, input_domain,
         
     # create rhoD_kernel
     kernel_rD = asam.rhoD_kernel(maximum, ifun)
-    
+    if comm.rank == 0:
+        print "dim", input_domain.shape
     if not hot_start:
         # run generalized chains
         (my_discretization, all_step_ratios) = sampler.generalized_chains(\
                 input_domain, t_set, kernel_rD, savefile, initial_sample_type)
+        print "COLD", comm.rank
     else:
         # cold start
         sampler1 = asam.sampler(sampler.num_samples/2, sampler.chain_length/2,
                 sampler.lb_model)
         (my_discretization, all_step_ratios) = sampler1.generalized_chains(\
                 input_domain, t_set, kernel_rD, savefile, initial_sample_type)
+        print "COLD then", comm.rank
         comm.barrier()
         # hot start 
         (my_discretization, all_step_ratios) = sampler.generalized_chains(\
                 input_domain, t_set, kernel_rD, savefile, initial_sample_type,
                 hot_start=hot_start)
-
+        print "HOT", comm.rank
+    comm.barrier()
     # check dimensions of input and output
     assert my_discretization.check_nums()
 
@@ -156,22 +170,22 @@ def verify_samples(QoI_range, sampler, input_domain,
     # did the savefiles get created? (proper number, contain proper keys)
     comm.barrier()
     mdat = dict()
-    if comm.rank == 0:
-        mdat = sio.loadmat(savefile)
-        saved_disc = bet.sample.load_discretization(savefile)
-        # compare the input
-        nptest.assert_array_equal(my_discretization._input_sample_set.\
-                get_values(), saved_disc._input_sample_set.get_values())
-        # compare the output
-        nptest.assert_array_equal(my_discretization._output_sample_set.\
-                get_values(), saved_disc._output_sample_set.get_values())
+    #if comm.rank == 0:
+    mdat = sio.loadmat(savefile)
+    saved_disc = bet.sample.load_discretization(savefile)
+    # compare the input
+    nptest.assert_array_equal(my_discretization._input_sample_set.\
+            get_values(), saved_disc._input_sample_set.get_values())
+    # compare the output
+    nptest.assert_array_equal(my_discretization._output_sample_set.\
+            get_values(), saved_disc._output_sample_set.get_values())
 
-        nptest.assert_array_equal(all_step_ratios, mdat['step_ratios'])
-        assert sampler.chain_length == mdat['chain_length']
-        assert sampler.num_samples == mdat['num_samples']
-        assert sampler.num_chains == mdat['num_chains']
-        nptest.assert_array_equal(sampler.sample_batch_no,
-                np.squeeze(mdat['sample_batch_no']))
+    nptest.assert_array_equal(all_step_ratios, mdat['step_ratios'])
+    assert sampler.chain_length == mdat['chain_length']
+    assert sampler.num_samples == mdat['num_samples']
+    assert sampler.num_chains == mdat['num_chains']
+    nptest.assert_array_equal(sampler.sample_batch_no,
+            np.squeeze(mdat['sample_batch_no']))
 
 class Test_adaptive_sampler(unittest.TestCase):
     """
