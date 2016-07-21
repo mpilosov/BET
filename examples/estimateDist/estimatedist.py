@@ -114,9 +114,33 @@ def generate_N_reference(my_model, N_grid_cells_per_dim, M_grid_cells_per_dim, a
     # np.random.seed(num_samples_param_space)
     
     # Sample from parameter space
-    Input_Samples = samp.sample_set(dim_input)
+    
+    # OPTION 1 - CARTESIAN 
+    Input_Samples = samp.cartesian_sample_set(dim_input)
     Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(N_grid_cells_per_dim, dim_input, axis=0) )
+    linvec = np.linspace(dim_range[0], dim_range[1], N_grid_cells_per_dim+1)
+    Input_Samples.setup([linvec, linvec])
+    # 
+    # OPTION 2 - REGULAR
+    # Input_Samples = samp.rectangle_sample_set(dim_input)
+    # Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    # linvec = np.linspace(dim_range[0], dim_range[1], N_grid_cells_per_dim+1)
+    # mins = [ [i, j] for i in linvec[:-1] for j in linvec[:-1] ]
+    # maxes = [ [i, j] for i in linvec[1::] for j in linvec[1::] ]
+    # Mins =  [ (m*np.ones((dim_input,))).tolist() for m in mins ]
+    # Maxes =  [ (m*np.ones((dim_input,))).tolist() for m in maxes ]
+    # Input_Samples.setup(Maxes,Mins)
+    # 
+    
+    # OPTION 3 - all manual, nothing fancy
+    
+    # Input_Samples = samp.sample_set(dim_input)
+    # Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+    # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(N_grid_cells_per_dim, dim_input, axis=0) )
+    # 
+    # print Input_Samples._values
+    # raise KeyboardInterrupt
+    
     Input_Samples.estimate_volume_mc()
     
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
