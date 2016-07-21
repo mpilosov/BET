@@ -12,6 +12,7 @@ import bet.sampling.basicSampling as bsam
 import bet.sensitivity.gradients as grad
 import bet.sensitivity.chooseQoIs as cqoi
 import bet.Comm as comm
+import bet.surrogates as surr
 
 def Hellinger(A, B):
     """
@@ -25,17 +26,19 @@ def Hellinger(A, B):
     # B = B*(n**2)
     return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
-num_integration_points = 1E5
-Integration_Sample_Set = samp.sample_set(dim_input)
-Integration_Sample_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
-Integration_Sample_Set = bsam.random_sample_set('random', Integration_Sample_Set, num_samples = num_integration_points)
+# num_integration_points = 1E1
+# Integration_Sample_Set = samp.sample_set(dim_input)
+# Integration_Sample_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
+# Integration_Sample_Set = bsam.random_sample_set('random', Integration_Sample_Set, num_samples = num_integration_points)
 
-def em_Hellinger(A,B):
-    def Hellinger(Integration_Sample_Set, A, B):
+def em_Hellinger(integration_sample_set, discretization_1, discretization_2):
         """
         A = first reference measure (input sample set)
         B = second reference measure (input sample set)
         """
+        prob_1 = calculateP.prob_from_discretization_input(discretization_1, integration_sample_set)
+        prob_2 = calculateP.prob_from_discretization_input(discretization_2, integration_sample_set)
+        return Hellinger(prob_1, prob_2)
         
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Choose some QoI indices to solve the ivnerse problem with
