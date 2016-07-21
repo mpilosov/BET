@@ -37,6 +37,17 @@ def make_model(theta):
         return QoI_samples
     return my_model
 
+int_s_sets = {h:[] for h in num_hell_bins_list} # integration discretization schemes
+num_integration_points = 1E1
+dim_input = 2
+dim_range = [0, 1]
+Integration_Sample_Set = samp.sample_set(dim_input)
+Integration_Sample_Set.set_domain(np.repeat([dim_range], dim_input, axis=0))
+
+for num_hell_bins in num_hell_bins_list:
+    # Integration_Sample_Set = bsam.random_sample_set('random', Integration_Sample_Set, num_samples = num_integration_points)
+    Integration_Sample_Set = bsam.regular_sample_set(Integration_Sample_Set, num_samples_per_dim = np.repeat(num_hell_bins, dim_input, axis=0) )
+    int_s_sets[num_hell_bins] = Integration_Sample_Set
 
 for s in skew_range:
     
@@ -48,11 +59,11 @@ for s in skew_range:
         
         Reference_Discretization, Partition_Set, Emulated_Set = \
             generate_N_reference(my_model, Nref_grid_per_dim, grid_cells_per_dim, alpha, beta, save_ref_disc, save_ref_plot)
-        ref_marginal = {h:[] for h in num_hell_bins_list}
-        for num_hell_bins in num_hell_bins_list:
-            (_, temp_ref_marginal) = plotP.calculate_2D_marginal_probs(Reference_Discretization._input_sample_set, nbins = num_hell_bins)
-            ref_marginal[num_hell_bins] = temp_ref_marginal
-        print 'Reference Done'
+        # ref_disc = {h:[] for h in num_hell_bins_list}
+        # for num_hell_bins in num_hell_bins_list:
+        #     ref_disc[num_hell_bins] = calculateP.prob_from_discretization_input(Reference_Discretization, int_s_sets[num_hell_bins])
+        #     
+        print 'References Done'
         for num_samples_param_space in num_sample_list:
             np.random.seed(num_samples_param_space*rand_mult)
             H_temp = {h: np.zeros((num_trials, len(QoI_choice_list))) for h in num_hell_bins_list}
@@ -68,8 +79,7 @@ for s in skew_range:
                     my_discretization = invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False)
                     
                     for num_hell_bins in num_hell_bins_list:
-                        (bins, temp_marginal) = plotP.calculate_2D_marginal_probs(my_discretization._input_sample_set, nbins = num_hell_bins)
-                        H_temp[num_hell_bins][trial, qoi_choice_idx] = Hellinger(ref_marginal[num_hell_bins][(0,1)], temp_marginal[(0,1)])
+                        H_temp[num_hell_bins][trial, qoi_choice_idx] = em_Hellinger(int_s_sets[num_hell_bins], Reference_Discretization, my_discretization)
             # print '\t %d Trials for N = %4d samples completed.\n'%(num_trials, num_samples_param_space)
             for num_hell_bins in num_hell_bins_list: 
                 H[num_hell_bins][grid_cells_per_dim][num_samples_param_space]['data'] = H_temp[num_hell_bins] # Hellinger distances as a list (each trial)
