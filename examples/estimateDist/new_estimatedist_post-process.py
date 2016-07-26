@@ -4,7 +4,7 @@ from new_estimatedist_setup import *
 for BigN in BigN_values: # reference solution resolution
     BigNval = BigN**(1 + (dim_input-1)*(reference_mesh_type == 'reg') )
     ref_sol_dir_2 = ref_sol_dir + '%s_BigN_%d'%(reference_mesh_type, BigNval) + '/'
-    data_dir_2 = data_dir+ '%s_BigN_%d'%(reference_mesh_type, BigNval)
+    data_dir_2 = data_dir + '%s_BigN_%d'%(reference_mesh_type, BigNval) + '/'
     
     for M in M_values: # data space discretization mesh
         Mval = M**(1 + (dim_input-1)*(data_discretization_type == 'reg') )
