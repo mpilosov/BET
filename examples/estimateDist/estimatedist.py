@@ -48,7 +48,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
 
     my_discretization = samp.discretization(input_sample_set=input_samples,
                                             output_sample_set=output_samples)
-    if Emulate is True:
+    if Emulate:
         my_discretization.set_emulated_input_sample_set(My_Discretization.get_emulated_input_sample_set().copy() )
     
     partition_output_samples = Partition_Discretization._output_sample_set.copy()
