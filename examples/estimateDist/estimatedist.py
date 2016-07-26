@@ -12,6 +12,7 @@ import bet.sampling.basicSampling as bsam
 import bet.sensitivity.gradients as grad
 import bet.sensitivity.chooseQoIs as cqoi
 import bet.Comm as comm
+import bet.surrogates as surr
 
 def Hellinger(A, B):
     """
@@ -25,6 +26,18 @@ def Hellinger(A, B):
     # B = B*(n**2)
     return np.sqrt( 0.5*sum([ ( np.sqrt(A[i,j]) - np.sqrt(B[i,j]) )**2 for i in range(n) for j in range(n)]))
 
+
+def em_Hellinger(integration_sample_set, discretization_1, discretization_2):
+        """
+        A = first reference measure (input sample set)
+        B = second reference measure (input sample set)
+        """
+        prob_1 = calculateP.prob_from_discretization_input(discretization_1, integration_sample_set)
+        prob_2 = calculateP.prob_from_discretization_input(discretization_2, integration_sample_set)
+
+        return np.sqrt( 0.5* sum( (np.sqrt(prob_1) - np.sqrt(prob_2) )**2 ))
+        # return Hellinger(prob_1, prob_2)
+        
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Choose some QoI indices to solve the ivnerse problem with
     input_samples = My_Discretization._input_sample_set.copy() # might not need to copy?
@@ -35,7 +48,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
 
     my_discretization = samp.discretization(input_sample_set=input_samples,
                                             output_sample_set=output_samples)
-    if Emulate is True:
+    if Emulate:
         my_discretization.set_emulated_input_sample_set(My_Discretization.get_emulated_input_sample_set().copy() )
     
     partition_output_samples = Partition_Discretization._output_sample_set.copy()
@@ -53,10 +66,11 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
                                                    output_sample_set=emulated_output_samples)
 
     # Compute the simple function approximation to the distribution on the data space of interest
+    # this function writes to output_probability_set in my_discretization, other two variables aren't overwritten
     simpleFunP.user_partition_user_distribution(my_discretization,
                                                 partition_discretization,
                                                 emulated_discretization)
-    if Emulate is True:
+    if Emulate:
         calculateP.prob_on_emulated_samples(my_discretization)
     else: 
         calculateP.prob(my_discretization)
@@ -182,7 +196,7 @@ def generate_N_reference(my_model, N_grid_cells_per_dim, M_grid_cells_per_dim, a
     
     return Reference_Discretization, Partition_Set, Emulated_Set 
 
-def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
+def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1, Emulate = False):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2 # definitely can pull this from partition_set
     dim_range = [0.0, 1.0] # probably can pull this from partition_set 
@@ -190,6 +204,8 @@ def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_sa
     # Define the sampler that will be used to create the discretization object - 2D for now only.
     sampler = bsam.sampler(my_model)
     # np.random.seed(num_samples_param_space)
+    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
+    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
     
     # Sample from parameter space
     Input_Samples = samp.sample_set(dim_input)
@@ -198,19 +214,17 @@ def generate_model_discretizations(my_model, Partition_Set, Emulated_Set, num_sa
     # Input_Samples = bsam.regular_sample_set(Input_Samples, num_samples_per_dim = np.repeat(np.int(np.sqrt(num_samples_param_space)), dim_input, axis=0) )
     Input_Samples.estimate_volume_mc()
     # Input_Samples.estimate_volume(n_mc_points=100*num_samples_param_space)
-    Emulated_Input_Samples = samp.sample_set(dim_input)
-    Emulated_Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
-    Emulated_Input_Samples = bsam.random_sample_set('random', Emulated_Input_Samples, num_samples = 1E5)
-    
     My_Discretization = sampler.compute_QoI_and_create_discretization(Input_Samples)
-    My_Discretization.set_emulated_input_sample_set(Emulated_Input_Samples)
-    
-    Partition_Discretization = sampler.compute_QoI_and_create_discretization(Partition_Set)
-    Emulated_Discretization = sampler.compute_QoI_and_create_discretization(Emulated_Set)
+    if Emulate:
+        Emulated_Input_Samples = samp.sample_set(dim_input)
+        Emulated_Input_Samples.set_domain(np.repeat([dim_range], dim_input, axis=0))
+        Emulated_Input_Samples = bsam.random_sample_set('random', Emulated_Input_Samples, num_samples = 1E5)
+            
+        My_Discretization.set_emulated_input_sample_set(Emulated_Input_Samples)
     
     return My_Discretization, Partition_Discretization, Emulated_Discretization
     
-def generate_reg_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1):
+def generate_reg_model_discretizations(my_model, Partition_Set, Emulated_Set, num_samples_param_space, alpha=1, beta=1, Emulate = False):
     # initialize some variables you might pass as parameters later on.
     dim_input = 2 # definitely can pull this from partition_set
     dim_range = [0.0, 1.0] # probably can pull this from partition_set 
