@@ -62,7 +62,8 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr ):
         print '\t !!!!! Integration samples lost = %4d'%(A_samples_lost)
     
     # return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
-    return (1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    return 0.5*(1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    
     
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Take full discretization objects, a set of indices for the QoI you want 
@@ -108,4 +109,34 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
         calculateP.prob(my_discretization)
         
     return my_discretization
+
+def invert_rect_using(My_Discretization, QoI_indices, Qref, rect_scale, Emulate = False):
+    # Take full discretization objects, a set of indices for the QoI you want 
+    # to use to perform inversion, and then do so by redefining the output spaces
+    # based on these indices and solving the problem as usual.
+    # My_Discretization is copied, the other two are pass-by-reference
+    input_samples = My_Discretization._input_sample_set.copy()
+    output_samples = My_Discretization._output_sample_set.copy()
     
+    output_samples._dim = len(QoI_indices)
+    output_samples.set_values(output_samples._values[:, QoI_indices])
+    
+    output_samples.global_to_local()
+
+    my_discretization = samp.discretization(input_sample_set=input_samples,
+                                            output_sample_set=output_samples)
+    if Emulate:
+        my_discretization.set_emulated_input_sample_set(My_Discretization._emulated_input_sample_set.copy() )
+    
+    # Compute the simple function approximation to the distribution on the data space of interest
+    simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(my_discretization, 
+            Q_ref =  Qref[QoI_indices],
+            rect_scale = rect_scale )
+    
+    if Emulate:
+        # calculateP.prob_on_emulated_samples(my_discretization)
+        calculateP.prob_with_emulated_volumes(my_discretization)
+    else: 
+        calculateP.prob(my_discretization)
+        
+    return my_discretization
