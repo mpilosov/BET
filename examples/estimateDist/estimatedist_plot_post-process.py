@@ -64,13 +64,13 @@ for BigN in BigN_values: # reference solution resolution
                 plt.setp(lines, color = np.repeat(line_colors[qoi_idx],3,axis=0) )
             if recover:
                 plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
-            else: 
-                plt.title('Hellinger Distance with I = %d\n BigN = %d, IP w/ scale = %.2f'%(Ival, BigNval, rect_scale))
+            # else: 
+                # plt.title('Hellinger Distance with I = %d\n BigN = %d, IP w/ scale = %.2f'%(Ival, BigNval, rect_scale))
             plt.xlabel('N')
             plt.ylabel('H')
             plt.xscale('log')
             plt.yscale('log')
-            plt.axis([20, 7500, 5E-2, 1])
+            plt.axis([20, 7500, 5E-3, 1])
             plt.savefig(new_data_filename)
             # 
             # for sol_num in range(len(QoI_choice_list)): # number of possible QoIs

@@ -213,7 +213,7 @@ if compute_ref_sol:
                             QoI_indices, Emulate = False)
                 else:        
                     ref_discretization = invert_rect_using(Ref_Discretization,
-                            QoI_indices, Qref, rect_scale, Emulate = False)
+                            QoI_indices, Qref, rect_scale[sol_num], Emulate = False)
                                     
                 samp.save_discretization(ref_discretization, filename)
     # print ref_solutions_filenames
@@ -265,7 +265,7 @@ if compute_est_sol:
                                 QoI_indices, Emulate = use_volumes)
                     else:
                         my_discretization = invert_rect_using(My_Discretization, 
-                                QoI_indices, Qref, rect_scale, Emulate = use_volumes)
+                                QoI_indices, Qref, rect_scale[sol_num], Emulate = use_volumes)
                            
                     samp.save_discretization(my_discretization, filename)
                     
