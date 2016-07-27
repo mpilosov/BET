@@ -39,9 +39,31 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr ):
         set_B = set_B.get_input_sample_set()
     num_int_samples = integration_sample_set.check_num()
     
-    den_A = np.divide( set_A._probabilities[set_A_ptr], set_A._volumes[set_A_ptr] )
-    den_B = np.divide( set_B._probabilities[set_B_ptr], set_B._volumes[set_B_ptr] )
-    return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    A_prob = set_A._probabilities[set_A_ptr]
+    A_vol = set_A._volumes[set_A_ptr]
+    
+    B_prob = set_B._probabilities[set_B_ptr]
+    B_vol = set_B._volumes[set_B_ptr]
+    
+    # prevents divide by zero. adheres to convention that if a cell has 
+    # zero volume due to inadequate emulation, then it will get assigned zero probability as well
+    A_samples_lost = len(A_vol[A_vol == 0])
+    B_samples_lost = len(B_vol[B_vol == 0])
+    A_vol[A_vol == 0] = 1
+    B_vol[B_vol == 0] = 1
+    
+    den_A = np.divide( A_prob, A_vol)
+    den_B = np.divide( B_prob, B_vol )
+    
+    # B_prob[A_prob == 0] = 0
+    if B_samples_lost>0:
+        print '\t samples lost = %4d'%(B_samples_lost)
+    if A_samples_lost>0:
+        print '\t !!!!! Integration samples lost = %4d'%(A_samples_lost)
+    
+    # return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    return (1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
     # Take full discretization objects, a set of indices for the QoI you want 
     # to use to perform inversion, and then do so by redefining the output spaces

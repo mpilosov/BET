@@ -1,7 +1,7 @@
 from new_estimatedist_funs import *
 
 dim_input = 2
-skew_range = [n+1 for n in range(3)]
+skew_range = [n+1 for n in range(6)]
 dim_output = len(skew_range)
 
 my_model = make_model(skew_range)
@@ -16,26 +16,27 @@ beta = 1
 
 # regular or random for all of them.
 data_discretization_type = 'reg'
-M_values = [2, 4, 5]
-num_samples_emulate_data_space = 1E4
+M_values = [8]
+num_samples_emulate_data_space = 1E6 # TODO append to Emulation_Discretization file
 
 reference_mesh_type = 'reg'
-BigN_values = [100]
+BigN_values = [8, 64, 100]
 # BigN_values = [1E5]
 
 estimate_mesh_type = 'rand'
-N_values = [25*2**n for n in range(4,10)]
+# N_values = [2,5,10,20]
+N_values = [25*2**n for n in range(12)]
 # N_values = [4, 16, 25, 100, 400, 2500, 10000 ]
-use_volumes = True # use calculateP.prob_with_emulated_volumes or just calculateP.prob - this uses emulated points
-num_emulated_input_samples = 1E5
+use_volumes = False # use calculateP.prob_with_emulated_volumes or just calculateP.prob - this uses emulated points
+num_emulated_input_samples = 1E6
 
 integration_mesh_type =  'rand'
-I_values = [1E3, 1E4, 1E5] # map(int, [1E3, 1E4, 1E5]) 
-
-num_trials = 50
+# I_values = [1E4] # map(int, [1E3, 1E4, 1E5]) 
+I_values = [1E4, 1E5]
+num_trials = 10
 
 cwd = os.getcwd()
-results_dir = 'results'
+results_dir = 'results_recreate_marginals'
 sub_dirs = ['postprocess_data', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used

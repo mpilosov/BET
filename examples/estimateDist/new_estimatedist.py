@@ -5,9 +5,7 @@ from new_estimatedist_setup import *
 integration_sets_filenames = []
 ref_solutions_filenames = []
 est_solutions_filenames = []
-
-ref_sol_int_ptrs_filenames = []
-est_sol_int_ptrs_filenames = []
+# TODO: can probably delete these lists here. Make sure they're unused.
 
 est_discretizations_filenames = [] # dont think I need this one
 
@@ -19,7 +17,7 @@ for I in I_values: # resolution of integration mesh
     temp_dir = cwd +  '/' + results_dir + '/' + sub_dirs[1] + '/'
     ensure_path_exists(temp_dir)
     filename = temp_dir + '%s_IntSet_%d'%(integration_mesh_type, Ival)
-    integration_sets_filenames.append(filename)
+    # integration_sets_filenames.append(filename)
     
     integration_sample_set = samp.sample_set(dim_input)
     integration_sample_set.set_domain(dim_range)
@@ -45,7 +43,7 @@ for I in I_values: # resolution of integration mesh
 print 'Integration Sets Computed'    
 
 
-# Create Reference Discretizations and Pointers to Integration Sets
+# Create Reference Discretizations
 for BigN in BigN_values:
     BigNval = BigN**(1 + (dim_input-1)*(reference_mesh_type == 'reg') )
     ref_sol_dir_2 = ref_sol_dir + '%s_BigN_%d'%(reference_mesh_type, BigNval) + '/'
@@ -69,22 +67,10 @@ for BigN in BigN_values:
                 ref_sample_set, num_samples = BigN)
     ref_sample_set.estimate_volume_mc()
     Ref_Discretization = sampler.compute_QoI_and_create_discretization(ref_sample_set)
-    ref_filename = 'Reference_Disc-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) 
-    samp.save_discretization(Ref_Discretization, ref_sol_dir_2 + ref_filename )
-    
-    # Generate io_pointer for integration sets
-    for int_mesh_num in range(len(I_values)):
-        Ival = I_values[int_mesh_num]**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
-        filename =ref_sol_dir_2 + 'ptr_from_' + \
-                '%s_I_%d'%(integration_mesh_type, Ival) + '_to_' + \
-                 '%s_BigN_%d'%(reference_mesh_type, BigNval) 
-                
-        int_mesh_set = samp.load_sample_set(integration_sets_filenames[int_mesh_num])  
-        (_, ptr) = ref_sample_set.query(int_mesh_set._values)
-        np.save(filename, ptr)
-        ref_sol_int_ptrs_filenames.append( filename + '.npy')
-    # print ref_sol_int_ptrs_filenames
-print 'Reference Discretizations Computed, Pointers from Integration Sets Created'
+    ref_filename = ref_sol_dir_2 + 'Reference_Disc-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) 
+    samp.save_discretization(Ref_Discretization, ref_filename )
+print 'Reference Discretizations Computed\n'
+
 
 # Create one emulation set instead of one for each M. 
 Emulation_Set = samp.sample_set(dim_input) # generate emulated set from true distribution
@@ -123,6 +109,7 @@ for M in M_values:
     samp.save_discretization(Partition_Discretization, part_filename)
 print 'Data Space Discretizations Computed'
 
+# TODO Make into separate modules
 
 # Compute Reference Solutions
 for BigN in BigN_values:
@@ -156,7 +143,7 @@ for BigN in BigN_values:
             samp.save_discretization(ref_discretization, filename)
 # print ref_solutions_filenames
 print 'Reference Solutions Computed'
-
+print '\t You can now run new_estimatedist_build_pointers.py'
 
 # Compute discretizations for estimates to solution - multiple trials 
 for N in N_values:
@@ -191,18 +178,9 @@ for N in N_values:
             emulated_input_samples = bsam.random_sample_set('random', emulated_input_samples, num_samples = num_emulated_input_samples)
             My_Discretization.set_emulated_input_sample_set(emulated_input_samples)
         samp.save_discretization(My_Discretization, filename)
-        
-        # Generate io_pointer for integration sets
-        for int_mesh_num in range(len(I_values)):
-            Ival = I_values[int_mesh_num]**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
-            filename = est_disc_dir + 'ptr_from_' + '%s_I_%d'%(integration_mesh_type, Ival) + \
-                    '_to_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
-            int_mesh_set = samp.load_sample_set(integration_sets_filenames[int_mesh_num])  
-            (_, ptr) = Input_Samples.query(int_mesh_set._values)
-            np.save(filename, ptr)
-            est_sol_int_ptrs_filenames.append( filename + '.npy')
+    print '\t Estimated Solution Discretizations for N = %d Computed'%(Nval)
 # print est_discretizations_filenames
-print 'Estimated Solution Discretizations Computed, Pointers from Integration Sets Created'
+
 
 
 # estimated solutions
@@ -243,5 +221,5 @@ for sol_num in range(len(QoI_choice_list)): # for each choice of skewed map
             print '\t \t %d Trials Completed for N = %d'%(num_trials, Nval)
             
 # print est_solutions_filenames
-paths_of_interest = np.array([integration_sets_filenames, ref_solutions_filenames, est_solutions_filenames, ref_sol_int_ptrs_filenames, est_sol_int_ptrs_filenames])
-np.save(cwd + '/' + results_dir + '/' + 'paths', paths_of_interest)
+# paths_of_interest = np.array([integration_sets_filenames, ref_solutions_filenames, est_solutions_filenames, ref_sol_int_ptrs_filenames, est_sol_int_ptrs_filenames])
+# np.save(cwd + '/' + results_dir + '/' + 'paths', paths_of_interest)
