@@ -40,11 +40,11 @@ ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
 rect_scale = 2*np.array([0.1, 0.0625, .0511, 0.0453])
 
-create_int_sets = False
+create_int_sets = True
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
+create_ref_disc = True
+create_est_discs = True
 compute_ref_sol = True
 compute_est_sol = True
 
@@ -52,7 +52,7 @@ recover = False
 
 cwd = os.getcwd()
 results_dir = 'results_IP'
-sub_dirs = ['postprocess_data_scale_2', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
+sub_dirs = ['postprocess_data_scaled', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'
