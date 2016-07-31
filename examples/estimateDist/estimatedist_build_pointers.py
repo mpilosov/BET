@@ -1,6 +1,6 @@
 from estimatedist_setup import *
 
-if create_ref_disc: # if you created (new) reference discretizations in the run, do this
+if create_ref_disc or create_int_sets: # if you created (new) reference discretizations in the run, do this
     print 'Building Pointers from Integration Sets into Reference Meshes'
     # Generate io_pointer for integration sets
     for BigN in BigN_values:
@@ -25,7 +25,7 @@ if create_ref_disc: # if you created (new) reference discretizations in the run,
         # print ref_sol_int_ptrs_filenames
     print 'Pointers from Integration Sets to Reference Meshes Created\n\n'
 
-if create_est_discs:
+if create_est_discs or create_int_sets:
     print 'Building Pointers from Integration Sets into Estimate Meshes'
     # Compute Pointers from Integration Sets into Estimates
     for N in N_values:
