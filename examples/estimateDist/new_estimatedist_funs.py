@@ -21,10 +21,12 @@ def make_model(skew_range):
     # TODO currently this map only works for 2-D input space     
     
     def my_model(parameter_samples):
-        Q_map = [ [1.0, 0.0] ]
+        Q_map = [ [1.0, 0.0] ] # all map components have the same norm, rect_size to have measures of events equal btwn spaces.
         for s in skew_range:
             theta = np.arcsin(1./s)
-            Q_map.append( [np.cos(theta), np.sin(theta)] )
+            # Q_map.append( [np.cos(theta), np.sin(theta)] ) # all map components have the same norm
+            # below with rect_size to have measures of events equal between spaces.
+            Q_map.append( [s*np.cos(theta), s*np.sin(theta)] ) 
         Q_map = np.array ( Q_map )
         QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
         return QoI_samples
@@ -129,12 +131,15 @@ def invert_rect_using(My_Discretization, QoI_indices, Qref, rect_scale, Emulate 
         my_discretization.set_emulated_input_sample_set(My_Discretization._emulated_input_sample_set.copy() )
     
     # Compute the simple function approximation to the distribution on the data space of interest
+    
     # simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(my_discretization, 
     #         Q_ref =  Qref[QoI_indices],
     #         rect_scale = rect_scale )
+            
     simpleFunP.regular_partition_uniform_distribution_rectangle_size(my_discretization, 
             Q_ref =  Qref[QoI_indices],
-            rect_size = rect_scale )
+            rect_size= rect_scale )
+    
     if Emulate:
         # calculateP.prob_on_emulated_samples(my_discretization)
         calculateP.prob_with_emulated_volumes(my_discretization)

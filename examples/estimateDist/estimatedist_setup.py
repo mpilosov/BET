@@ -20,7 +20,7 @@ M_values = [2]
 num_samples_emulate_data_space = 1E5 # TODO append to Emulation_Discretization file
 
 reference_mesh_type = 'reg'
-BigN_values = [50, 100, 200]
+BigN_values = [200]
 # BigN_values = [1E5]
 
 estimate_mesh_type = 'rand'
@@ -34,11 +34,11 @@ num_emulated_input_samples = 1E6
 integration_mesh_type =  'rand'
 # I_values = [1E4] # map(int, [1E3, 1E4, 1E5]) 
 I_values = [1E5]
-num_trials = 25
+num_trials = 10
 
 ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
-rect_scale = 2*np.array([0.1, 0.0625, .0511, 0.0453])
+rect_scale = 0.2
 
 # create_int_sets = True
 # create_data_discs = False
@@ -50,15 +50,15 @@ rect_scale = 2*np.array([0.1, 0.0625, .0511, 0.0453])
 create_int_sets = True
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
-compute_ref_sol = False
-compute_est_sol = False
+create_ref_disc = True
+create_est_discs = True
+compute_ref_sol = True
+compute_est_sol = True
 recover = False
 
 cwd = os.getcwd()
-results_dir = 'results_IP_new'
-sub_dirs = ['postprocess_data_scaled', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
+results_dir = 'results_IP_newmaps2'
+sub_dirs = ['postprocess', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'

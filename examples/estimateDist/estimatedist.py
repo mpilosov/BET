@@ -81,7 +81,7 @@ if create_ref_disc:
         ref_filename = ref_sol_dir_2 + 'Reference_Disc-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) 
         samp.save_discretization(Ref_Discretization, ref_filename )
     print 'Reference Discretizations Computed\n'
-    print '\t You can now run new_estimatedist_build_pointers.py'
+    print '\t You can now run python estimatedist_build_pointers.py'
 
 
 
@@ -213,7 +213,7 @@ if compute_ref_sol:
                             QoI_indices, Emulate = False)
                 else:        
                     ref_discretization = invert_rect_using(Ref_Discretization,
-                            QoI_indices, Qref, rect_scale[sol_num], Emulate = False)
+                            QoI_indices, Qref, rect_scale*np.array([1., 1./(1 + np.sqrt(skew_range[sol_num]**2  - 1 ) ) ]), Emulate = False)
                                     
                 samp.save_discretization(ref_discretization, filename)
     # print ref_solutions_filenames
@@ -265,7 +265,7 @@ if compute_est_sol:
                                 QoI_indices, Emulate = use_volumes)
                     else:
                         my_discretization = invert_rect_using(My_Discretization, 
-                                QoI_indices, Qref, rect_scale[sol_num], Emulate = use_volumes)
+                                QoI_indices, Qref, rect_scale*np.array([1., 1./(1 + np.sqrt(skew_range[sol_num]**2  - 1 ) ) ]), Emulate = use_volumes)
                            
                     samp.save_discretization(my_discretization, filename)
                     

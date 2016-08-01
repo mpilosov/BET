@@ -60,15 +60,9 @@ for BigN in BigN_values: # reference solution resolution
             alpha = ['a', 'b','c','d','e','f','g']
             ref_vec = np.array([200, 6400])
             plt.plot(ref_vec,10./np.sqrt(ref_vec), linewidth=1.0, ls = '-', color = 'k')
-            ### SCOTTS STUFF
-            # samples = np.array([50,200,800,3200])
-            # qa = np.array([4.66E-2, 2.37E-2, 1.22E-2, 6.13E-3])
-            # qb = np.array([8.01E-2, 4.45E-2, 2.33E-2, 1.22E-2])
-            ###
-            # plt.plot(samples, qa, 'h', linewidth=1.0, ls = '--', color = np.repeat(line_colors[0],3,axis=0))
-            # plt.plot(samples, qb, 'h', linewidth=1.0, ls = '-', color = np.repeat(line_colors[1],3,axis=0))
+
             for qoi_idx in range(len(QoI_choice_list)):
-                lines.append( plt.plot(N_values, data_for_M[:,qoi_idx], 'h', label = 'Q(%s)'%alpha[qoi_idx]) )
+                lines.append( plt.plot(N_values, data_for_M[:,qoi_idx], 'h', label = 'Q(%s)'%alpha[qoi_idx]) ) # NOTE not sure if label is working correctly
                 plt.setp(lines[qoi_idx], linewidth=1.0,ls='--')
                 if qoi_idx == 0:
                     plt.setp(lines, linewidth=1.0,ls='-')
@@ -76,17 +70,13 @@ for BigN in BigN_values: # reference solution resolution
             if recover:
                 plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
             else: 
-                scale_vec_str = ''
-                for scale in rect_scale[0:len(QoI_choice_list)]:
-                    scale_vec_str += '%.3f, '%scale
-                # plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_scale = %s'%(Ival, BigNval, scale_vec_str))
+                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_scale = %s'%(Ival, BigNval, rect_scale))
             plt.xlabel('Number of Samples', size='small')
             plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), size='small')
-            # plt.ylabel('Symmetric Difference', size='small')
             plt.xscale('log')
             plt.yscale('log')
             
-            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = 'small')
+            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = 'small') # NOTE: manually creating legend
             # plt.axis([20, 7500, 5E-3, 1])
             plt.savefig(new_data_filename)
             
