@@ -90,8 +90,8 @@ expected volume of the cross section of the inverse solution.
 # the parameter space.  We choose the set of QoIs to consider.
 
 QoI_indices = [0, 7] # choose up to input_dim
-#QoI_indices = [0, 1]
-#QoI_indices = [0, 7, 34, 39, 90]
+QoI_indices = [0, 1]
+QoI_indices = [0, 7, 34, 39, 90]
 #QoI_indices = [0, 1, 2, 3, 4]
 
 # Choose some QoI indices to solve the ivnerse problem with
@@ -113,7 +113,7 @@ my_discretization = sample.discretization(input_sample_set=input_samples,
 # Find the simple function approximation
 simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(
     data_set=my_discretization, Q_ref=Q_ref, rect_scale=bin_ratio,
-    center_pts_per_edge=1)
+    cells_per_dimension=1)
 
 # Calculate probablities making the Monte Carlo assumption
 calculateP.prob(my_discretization)

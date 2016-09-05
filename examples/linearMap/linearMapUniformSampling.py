@@ -104,8 +104,9 @@ Q_ref =  my_model(param_ref)
 
 # Create some plots of input and output discretizations
 plotD.scatter_2D_multi(input_samples, ref_sample= param_ref, showdim = 'all',
-                       filename = 'linearMap_ParameterSamples.eps')
-plotD.show_data_domain_2D(my_discretization, Q_ref = Q_ref, file_extension='eps')
+                       filename = 'linearMap_ParameterSamples',
+                       file_extension = '.eps')
+plotD.show_data_domain_2D(my_discretization, Q_ref = Q_ref, file_extension='.eps')
 
 '''
 Suggested changes for user:
@@ -118,7 +119,7 @@ randomDataDiscretization = False
 if randomDataDiscretization is False:
     simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(
         data_set=my_discretization, Q_ref=Q_ref, rect_scale=0.25,
-        center_pts_per_edge = 3)
+        cells_per_dimension = 3)
 else:
     simpleFunP.uniform_partition_uniform_distribution_rectangle_scaled(
         data_set=my_discretization, Q_ref=Q_ref, rect_scale=0.25,

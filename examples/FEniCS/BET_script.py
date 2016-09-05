@@ -98,10 +98,11 @@ Q_ref = my_model(param_ref)
 
 # Create some plots of input and output discretizations
 plotD.scatter_2D(input_samples, ref_sample=param_ref[0,:],
-                 filename='FEniCS_ParameterSamples.eps')
+                 filename='FEniCS_ParameterSamples',
+                 file_extension = '.eps')
 if Q_ref.size == 2:
     plotD.show_data_domain_2D(my_discretization, Q_ref=Q_ref[0,:],
-            file_extension="eps")
+            file_extension=".eps")
 
 '''
 Suggested changes for user:
@@ -114,7 +115,7 @@ randomDataDiscretization = False
 if randomDataDiscretization is False:
     simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(
         data_set=my_discretization, Q_ref=Q_ref[0,:], rect_scale=0.1,
-        center_pts_per_edge=3)
+        cells_per_dimension=3)
 else:
     simpleFunP.uniform_partition_uniform_distribution_rectangle_scaled(
         data_set=my_discretization, Q_ref=Q_ref[0,:], rect_scale=0.1,
@@ -133,8 +134,10 @@ calculateP.prob(my_discretization)
 marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.5)
 
 # plot 2d marginals probs
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename="FEniCS",
-                             lam_ref=param_ref[0,:], file_extension=".eps",
+plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples,
+                             filename="FEniCS",
+                             lam_ref=param_ref[0,:],
+                             file_extension=".eps",
                              plot_surface=False)
 
 # calculate 1d marginal probs
@@ -143,8 +146,10 @@ plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename="FEniCS"
 # smooth 1d marginal probs (optional)
 marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.5)
 # plot 2d marginal probs
-plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename="FEniCS",
-                             lam_ref=param_ref[0,:], file_extension=".eps")
+plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples,
+                             filename="FEniCS",
+                             lam_ref=param_ref[0,:],
+                             file_extension=".eps")
 
 
 
