@@ -1,7 +1,8 @@
-from new_estimatedist_funs import *
+from estimatedist_funs import *
 
 dim_input = 2
-skew_range = [n+1 for n in range(2)]
+# skew_range = [n+1 for n in range(2)]
+skew_range = [1,2,4,8]
 dim_output = len(skew_range)
 
 my_model = make_model(skew_range)
@@ -34,11 +35,11 @@ num_emulated_input_samples = 1E6
 integration_mesh_type =  'rand'
 # I_values = [1E4] # map(int, [1E3, 1E4, 1E5]) 
 I_values = [1E5]
-num_trials = 10
+num_trials = 25
 
-ref_input = 0.5*np.ones(dim_input)
+ref_input = 0.45*np.ones(dim_input)
 Qref =  my_model(ref_input)
-rect_scale = 0.2
+rect_size = 0.1
 
 # create_int_sets = True
 # create_data_discs = False
@@ -47,18 +48,18 @@ rect_scale = 0.2
 # create_est_discs = True
 # compute_ref_sol = True
 # compute_est_sol = True
-create_int_sets = True
+create_int_sets = False
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = True
-create_est_discs = True
+create_ref_disc = False
+create_est_discs = False
 compute_ref_sol = True
 compute_est_sol = True
 recover = False
 
 cwd = os.getcwd()
-results_dir = 'results_IP_newmaps2'
-sub_dirs = ['postprocess', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
+results_dir = 'results_IP_newmaps3'
+sub_dirs = ['postprocess_larger_rect', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'

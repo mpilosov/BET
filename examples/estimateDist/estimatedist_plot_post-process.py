@@ -50,14 +50,38 @@ for BigN in BigN_values: # reference solution resolution
                 data_for_M = np.array([ D[ N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') ) ]['stats'][0] for N in N_values])
             else:
                 data_for_M = np.array([ D[ N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') ) ]['stats'][1] for N in N_values])
-            print data_for_M
-            print '\n'
+            
+            alpha = ['a', 'b','c','d','e','f','g']
+            
+            print 'I = %d\n\n'%Ival 
+            
+            
+            str1 = '\\begin{table}[h!]\n\\begin{tabular}{ c '
+            for qoi_idx in range(len(QoI_choice_list)):
+                str1 += '| c ' 
+            str1 += '}'
+            
+            str1 += '\nN'
+            for qoi_idx in range(len(QoI_choice_list)):
+                str1 += ' & $Q^{(%s)}$'%alpha[qoi_idx]
+            str1 += '\\\\'  + ' \\hline \\hline\n'
+            for i in range(len(N_values)):
+                N = N_values[i]
+                Nval = N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') )
+                str1 += '%d'%Nval
+                for j in range(len(QoI_choice_list)):
+                    str1 += ' & %2.2e'%data_for_M[i][j]
+                str1 += '\\\\ \n'
+            str1 += '\\end{tabular}\n\\end{table}'
+            print str1
+            
+            print '\n\n'
             new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
                     '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
                     '%s_I_%d'%(integration_mesh_type, Ival) + '.eps'
             plt.cla()
             lines = []
-            alpha = ['a', 'b','c','d','e','f','g']
+            
             ref_vec = np.array([200, 6400])
             plt.plot(ref_vec,10./np.sqrt(ref_vec), linewidth=1.0, ls = '-', color = 'k')
 
@@ -70,7 +94,7 @@ for BigN in BigN_values: # reference solution resolution
             if recover:
                 plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
             else: 
-                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_scale = %s'%(Ival, BigNval, rect_scale))
+                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s'%(Ival, BigNval, rect_size))
             plt.xlabel('Number of Samples', size='small')
             plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), size='small')
             plt.xscale('log')
