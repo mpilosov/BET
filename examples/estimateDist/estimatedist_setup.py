@@ -17,7 +17,7 @@ beta = 1
 
 # regular or random for all of them.
 data_discretization_type = 'reg'
-M_values = [2]
+M_values = [1, 2]
 num_samples_emulate_data_space = 1E5 # TODO append to Emulation_Discretization file
 
 reference_mesh_type = 'reg'
@@ -37,9 +37,9 @@ integration_mesh_type =  'rand'
 I_values = [1E5]
 num_trials = 25
 
-ref_input = 0.45*np.ones(dim_input)
+ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
-rect_size = 0.1
+rect_size = 0.2
 
 # create_int_sets = True
 # create_data_discs = False
@@ -51,14 +51,14 @@ rect_size = 0.1
 create_int_sets = False
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
+create_ref_disc = True
+create_est_discs = True
 compute_ref_sol = True
 compute_est_sol = True
 recover = False
 
 cwd = os.getcwd()
-results_dir = 'results_IP_newmaps3'
+results_dir = 'results_IP_ref'
 sub_dirs = ['postprocess_larger_rect', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used

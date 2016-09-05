@@ -30,19 +30,28 @@ line_colors = np.linspace(0.8, 0, len(skew_range)) # LIGHT TO DARK - LOW to HIGH
 
 for BigN in BigN_values: # reference solution resolution
     BigNval = BigN**(1 + (dim_input-1)*(reference_mesh_type == 'reg') )
-    ref_sol_dir_2 = ref_sol_dir + '%s_BigN_%d'%(reference_mesh_type, BigNval) + '/'
     data_dir_2 = data_dir + '%s_BigN_%d'%(reference_mesh_type, BigNval) + '/'
-    
     for M in M_values: # data space discretization mesh
         Mval = M**(1 + (dim_input-1)*(data_discretization_type == 'reg') )
-        ref_sol_dir_3 = ref_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
-        data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
-        print 'M = %d'%Mval
+        if recover:
+            data_dir_3 = data_dir_2 + '%s_RM_%d'%(data_discretization_type, Mval) + '/'
+        else:            
+            data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
+        
+        print 'Integration Mesh I = %d'%Ival, 'Data Discretization M = %d'%Mval
+        if not recover:
+            print 'rect_size = %f'%rect_size, 'lambda_ref = ', ref_input[:], '\n'
         for I in I_values: # integration mesh
             Ival = I**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
-            data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
-                    '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
-                    '%s_I_%d'%(integration_mesh_type, Ival)
+            if recover:
+                data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_RM_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival)
+            else:
+                data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival)
+                    
             D = np.load(data_filename + '.npy')
             D = D.item()
             # data_dict = { (N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') )) : {} for N in N_values }
@@ -53,8 +62,7 @@ for BigN in BigN_values: # reference solution resolution
             
             alpha = ['a', 'b','c','d','e','f','g']
             
-            print 'I = %d\n\n'%Ival 
-            
+             
             
             str1 = '\\begin{table}[h!]\n\\begin{tabular}{ c '
             for qoi_idx in range(len(QoI_choice_list)):
@@ -76,9 +84,14 @@ for BigN in BigN_values: # reference solution resolution
             print str1
             
             print '\n\n'
-            new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
-                    '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
-                    '%s_I_%d'%(integration_mesh_type, Ival) + '.eps'
+            if recover:
+                new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_RM_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival) + '.eps'
+            else:
+                new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival) + '.eps'
             plt.cla()
             lines = []
             
@@ -94,7 +107,7 @@ for BigN in BigN_values: # reference solution resolution
             if recover:
                 plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
             else: 
-                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s'%(Ival, BigNval, rect_size))
+                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
             plt.xlabel('Number of Samples', size='small')
             plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), size='small')
             plt.xscale('log')

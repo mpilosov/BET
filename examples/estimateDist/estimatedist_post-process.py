@@ -8,8 +8,14 @@ for BigN in BigN_values: # reference solution resolution
     
     for M in M_values: # data space discretization mesh
         Mval = M**(1 + (dim_input-1)*(data_discretization_type == 'reg') )
-        ref_sol_dir_3 = ref_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
-        data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
+        
+        if recover:
+            ref_sol_dir_3 = ref_sol_dir_2 + '%s_RM_%d'%(data_discretization_type, Mval) + '/'
+            data_dir_3 = data_dir_2 + '%s_RM_%d'%(data_discretization_type, Mval) + '/'
+        else:
+            ref_sol_dir_3 = ref_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
+            data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
+        
         ensure_path_exists(data_dir_3)
         for I in I_values: # integration mesh
             Ival = I**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
@@ -48,13 +54,22 @@ for BigN in BigN_values: # reference solution resolution
                         est_sol_dir_3 = est_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
                         est_sol_dir_4 = est_sol_dir_3 + '%s_N_%d'%(estimate_mesh_type, Nval) + '/' # all trial sols inside this folder
                         
-                        est_sol_filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
-                        '%s_M_%d'%(data_discretization_type, Mval) + \
-                        '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
-                        
-                        ref_sol_filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
-                                '%s_M_%d'%(data_discretization_type, Mval) + '_'  + \
-                                '%s_BigN_%d'%(reference_mesh_type, BigNval)
+                        if recover:
+                            est_sol_filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                            '%s_RM_%d'%(data_discretization_type, Mval) + \
+                            '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
+                            
+                            ref_sol_filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                                    '%s_RM_%d'%(data_discretization_type, Mval) + '_'  + \
+                                    '%s_BigN_%d'%(reference_mesh_type, BigNval)
+                        else:
+                            est_sol_filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                            '%s_M_%d'%(data_discretization_type, Mval) + \
+                            '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
+                            
+                            ref_sol_filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                                    '%s_M_%d'%(data_discretization_type, Mval) + '_'  + \
+                                    '%s_BigN_%d'%(reference_mesh_type, BigNval)
                                  
                         Ref_Disc = samp.load_discretization(ref_sol_filename)
                         Est_Disc = samp.load_discretization(est_sol_filename)
@@ -76,7 +91,12 @@ for BigN in BigN_values: # reference solution resolution
                 data_dict[Nval]['stats'] = [ np.mean(temp_array, axis=0), np.var(temp_array, axis=0) ]           
                 
             # save data object
-            data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
-                    '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
-                    '%s_I_%d'%(integration_mesh_type, Ival)
+            if recover:
+                data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_RM_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival)
+            else:
+                data_filename = data_dir_3 + 'Data-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
+                        '_' + '%s_M_%d'%(data_discretization_type, Mval) + '_' + \
+                        '%s_I_%d'%(integration_mesh_type, Ival)
             np.save(data_filename, data_dict)

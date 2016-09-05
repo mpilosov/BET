@@ -202,20 +202,24 @@ if compute_ref_sol:
             
             for sol_num in range(len(QoI_choice_list)):
                 QoI_indices = QoI_choice_list[sol_num]
-            
-                filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
-                        '%s_M_%d'%(data_discretization_type, Mval) + '_'  + \
-                        '%s_BigN_%d'%(reference_mesh_type, BigNval)
-                # ref_solutions_filenames.append( filename )
+                            
                 if recover:
                     ref_discretization = invert_using(Ref_Discretization, 
                             Partition_Discretization, Emulation_Discretization, 
                             QoI_indices, Emulate = False)
+                    filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                            '%s_RM_%d'%(data_discretization_type, Mval) + '_'  + \
+                            '%s_BigN_%d'%(reference_mesh_type, BigNval)
                 else:        
                     ref_discretization = invert_rect_using(Ref_Discretization,
-                            QoI_indices, Qref, rect_size, Emulate = False)
+                            QoI_indices, Qref, rect_size,
+                            cells_per_dimension = M, Emulate = use_volumes)
+                    filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                            '%s_M_%d'%(data_discretization_type, Mval) + '_'  + \
+                            '%s_BigN_%d'%(reference_mesh_type, BigNval)
                                     
                 samp.save_discretization(ref_discretization, filename)
+                # ref_solutions_filenames.append( filename )
     # print ref_solutions_filenames
     print 'Reference Solutions Computed'
 
@@ -239,7 +243,10 @@ if compute_est_sol:
                         '%s_M_%d'%(data_discretization_type, Mval)
                 Partition_Discretization = samp.load_discretization(part_filename)
             
-            est_sol_dir_3 = est_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
+            if recover:
+                est_sol_dir_3 = est_sol_dir_2 + '%s_RM_%d'%(data_discretization_type, Mval) + '/'
+            else:
+                est_sol_dir_3 = est_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
             
             print '\t With M = %d'%(Mval)
             for N in N_values:
@@ -248,11 +255,6 @@ if compute_est_sol:
                 ensure_path_exists(est_sol_dir_4)
                 
                 for trial in range(num_trials):
-                    filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
-                    '%s_M_%d'%(data_discretization_type, Mval) + \
-                    '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
-                    # est_solutions_filenames.append(filename)
-                    
                     load_est_disc_dir = cwd + '/' + results_dir + '/' + sub_dirs[2] + '/' + \
                             '%s_N_%d'%(estimate_mesh_type, Nval) + '/' + \
                             '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
@@ -263,11 +265,18 @@ if compute_est_sol:
                         my_discretization = invert_using(My_Discretization, 
                                 Partition_Discretization, Emulation_Discretization,
                                 QoI_indices, Emulate = use_volumes)
+                        filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                                '%s_RM_%d'%(data_discretization_type, Mval) + \
+                                '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
                     else:
                         my_discretization = invert_rect_using(My_Discretization, 
-                                QoI_indices, Qref, rect_size, Emulate = use_volumes)
-                           
+                                QoI_indices, Qref, rect_size, 
+                                cells_per_dimension = M, Emulate = use_volumes)
+                        filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
+                                '%s_M_%d'%(data_discretization_type, Mval) + \
+                                '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)   
                     samp.save_discretization(my_discretization, filename)
+                    # est_solutions_filenames.append(filename)
                     
                 print '\t \t %d Trials Completed for N = %d'%(num_trials, Nval)
                 
