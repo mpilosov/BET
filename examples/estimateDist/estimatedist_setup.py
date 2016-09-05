@@ -41,21 +41,25 @@ ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
 rect_size = 0.2
 
-# create_int_sets = True
-# create_data_discs = False
-# compute_emulated_set = False
-# create_ref_disc = True
-# create_est_discs = True
-# compute_ref_sol = True
-# compute_est_sol = True
-create_int_sets = False
+recover = False
+
+## Initial Run
+create_int_sets = True
 create_data_discs = False
 compute_emulated_set = False
 create_ref_disc = True
 create_est_discs = True
 compute_ref_sol = True
 compute_est_sol = True
-recover = False
+
+## Post-Processing
+# create_int_sets = False
+# create_data_discs = False
+# compute_emulated_set = False
+# create_ref_disc = False
+# create_est_discs = False
+# compute_ref_sol = True
+# compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_IP_ref'
