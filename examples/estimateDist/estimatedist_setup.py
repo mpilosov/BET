@@ -17,7 +17,7 @@ beta = 1
 
 # regular or random for all of them.
 data_discretization_type = 'reg'
-M_values = [1, 2]
+M_values = [1, 2, 3]
 num_samples_emulate_data_space = 1E5 # TODO append to Emulation_Discretization file
 
 reference_mesh_type = 'reg'
@@ -35,7 +35,7 @@ num_emulated_input_samples = 1E6
 integration_mesh_type =  'rand'
 # I_values = [1E4] # map(int, [1E3, 1E4, 1E5]) 
 I_values = [1E5]
-num_trials = 25
+num_trials = 50
 
 ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)

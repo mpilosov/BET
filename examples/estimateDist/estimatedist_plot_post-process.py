@@ -38,7 +38,6 @@ for BigN in BigN_values: # reference solution resolution
         else:            
             data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
         
-        print 'Integration Mesh I = %d'%Ival, 'Data Discretization M = %d'%Mval
         if not recover:
             print 'rect_size = %f'%rect_size, 'lambda_ref = ', ref_input[:], '\n'
         for I in I_values: # integration mesh
@@ -62,7 +61,7 @@ for BigN in BigN_values: # reference solution resolution
             
             alpha = ['a', 'b','c','d','e','f','g']
             
-             
+            print 'Integration Mesh I = %d'%Ival, 'Data Discretization M = %d'%Mval
             
             str1 = '\\begin{table}[h!]\n\\begin{tabular}{ c '
             for qoi_idx in range(len(QoI_choice_list)):
