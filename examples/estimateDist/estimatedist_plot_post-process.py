@@ -109,14 +109,14 @@ for BigN in BigN_values: # reference solution resolution
                 else: 
                     plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
             
-            plt.xlabel('Number of Samples', fontsize=14)
-            plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=14)
+            plt.xlabel('Number of Samples', fontsize=label_fsize)
+            plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=label_fsize)
             plt.xscale('log')
             plt.yscale('log')
-            plt.xtick(fontsize=14)
-            plt.ytick(fontsize=14)
+            plt.xticks(fontsize=tick_fsize)
+            plt.yticks(fontsize=tick_fsize)
             
-            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = 12) # NOTE: manually creating legend
+            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = legend_fsize) # NOTE: manually creating legend
             # plt.axis([20, 7500, 5E-3, 1])
             plt.savefig(new_data_filename)
             

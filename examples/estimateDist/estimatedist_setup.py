@@ -44,6 +44,9 @@ rect_size = np.sqrt(0.2)
 recover = False
 
 show_title = False
+label_fsize = 14
+tick_fsize = 12
+legend_fsize = 12
 ## Initial Run
 # create_int_sets = True
 # create_data_discs = False
