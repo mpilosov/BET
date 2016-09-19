@@ -103,16 +103,20 @@ for BigN in BigN_values: # reference solution resolution
                 if qoi_idx == 0:
                     plt.setp(lines, linewidth=1.0,ls='-')
                 plt.setp(lines[qoi_idx], color = np.repeat(line_colors[qoi_idx],3,axis=0) )
-            if recover:
-                plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
-            else: 
-                plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
-            plt.xlabel('Number of Samples', size='small')
-            plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), size='small')
+            if show_title:
+                if recover:
+                    plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
+                else: 
+                    plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
+            
+            plt.xlabel('Number of Samples', fontsize=14)
+            plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=14)
             plt.xscale('log')
             plt.yscale('log')
+            plt.xtick(fontsize=14)
+            plt.ytick(fontsize=14)
             
-            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = 'small') # NOTE: manually creating legend
+            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = 12) # NOTE: manually creating legend
             # plt.axis([20, 7500, 5E-3, 1])
             plt.savefig(new_data_filename)
             
