@@ -39,14 +39,14 @@ num_trials = 50
 
 ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
-rect_size = np.sqrt(0.2)
+rect_size = np.sqrt(0.1)
 
 recover = False
 
 show_title = False
-label_fsize = 14
-tick_fsize = 12
-legend_fsize = 12
+label_fsize = 20
+tick_fsize = 14
+legend_fsize = 14
 ## Initial Run
 # create_int_sets = True
 # create_data_discs = False
@@ -67,7 +67,7 @@ compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_IP_ref'
-sub_dirs = ['postprocess_larger_rect', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
+sub_dirs = ['postprocess_medium_rect', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'

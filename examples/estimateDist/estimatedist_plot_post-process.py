@@ -75,10 +75,10 @@ for BigN in BigN_values: # reference solution resolution
             for i in range(len(N_values)):
                 N = N_values[i]
                 Nval = N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') )
-                str1 += '%d'%Nval
+                str1 += '$%d$'%Nval
                 for j in range(len(QoI_choice_list)):
-                    str1 += ' & %2.2e'%data_for_M[i][j]
-                str1 += '\\\\ \n'
+                    str1 += ' & $%2.2E$'%data_for_M[i][j]
+                str1 += '\\\\ \\hline \n \n'
             str1 += '\\end{tabular}\n\\end{table}'
             print str1
             
@@ -110,11 +110,13 @@ for BigN in BigN_values: # reference solution resolution
                     plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
             
             plt.xlabel('Number of Samples', fontsize=label_fsize)
-            plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=label_fsize)
+            # plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=label_fsize)
+            plt.ylabel('Hellinger Distance', fontsize=label_fsize)
             plt.xscale('log')
             plt.yscale('log')
             plt.xticks(fontsize=tick_fsize)
             plt.yticks(fontsize=tick_fsize)
+            plt.gcf().subplots_adjust(bottom=0.125,left=0.125)
             
             plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = legend_fsize) # NOTE: manually creating legend
             # plt.axis([20, 7500, 5E-3, 1])
