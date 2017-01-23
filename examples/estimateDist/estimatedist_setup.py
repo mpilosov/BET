@@ -1,8 +1,8 @@
 from estimatedist_funs import *
 
-dim_input = 2
+dim_input = 3
 # skew_range = [n+1 for n in range(2)]
-skew_range = [1,2]
+skew_range = [1,2,4,8]
 dim_output = len(skew_range)
 
 my_model = make_model(skew_range)
@@ -47,26 +47,27 @@ show_title = False
 label_fsize = 20
 tick_fsize = 14
 legend_fsize = 14
-## Initial Run
-# create_int_sets = True
-# create_data_discs = False
-# compute_emulated_set = False
-# create_ref_disc = True
-# create_est_discs = True
-# compute_ref_sol = True
-# compute_est_sol = True
 
-## Post-Processing
-create_int_sets = False
+## Initial Run
+create_int_sets = True
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
+create_ref_disc = True
+create_est_discs = True
 compute_ref_sol = True
 compute_est_sol = True
 
+## Post-Processing
+# create_int_sets = False
+# create_data_discs = False
+# compute_emulated_set = False
+# create_ref_disc = False
+# create_est_discs = False
+# compute_ref_sol = True
+# compute_est_sol = True
+
 cwd = os.getcwd()
-results_dir = 'results_IP_ref'
+results_dir = 'results_IP_ref3d'
 sub_dirs = ['postprocess_medium_rect', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
