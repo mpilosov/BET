@@ -21,13 +21,13 @@ def make_model(skew_range):
     # TODO currently this map only works for 2-D input space     
     
     def my_model(parameter_samples):
-        Q_map = [ [1.0, 0.0, 0.0] ] # all map components have the same norm, rect_size to have measures of events equal btwn spaces.
+        Q_map = [ [1.0, 0.0] ] # all map components have the same norm, rect_size to have measures of events equal btwn spaces.
         for s in skew_range:
             # theta = np.arcsin(1./s)
             # Q_map.append( [np.cos(theta), np.sin(theta)] ) # all map components have the same norm
             # below with rect_size to have measures of events equal between spaces.
             # Q_map.append( [s*np.cos(theta), s*np.sin(theta)] ) 
-            Q_map.append( [np.sqrt(s**2 - 1), 1, 0] )
+            Q_map.append( [np.sqrt(s**2 - 1), 1] )
         Q_map = np.array( Q_map )
         QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
         return QoI_samples

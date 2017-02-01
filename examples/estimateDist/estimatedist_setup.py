@@ -1,6 +1,6 @@
 from estimatedist_funs import *
 
-dim_input = 3
+dim_input = 2
 # skew_range = [n+1 for n in range(2)]
 skew_range = [1,2,4]
 dim_output = 2
@@ -49,25 +49,25 @@ tick_fsize = 14
 legend_fsize = 14
 
 ## Initial Run
-# create_int_sets = True
-# create_data_discs = False
-# compute_emulated_set = False
-# create_ref_disc = True
-# create_est_discs = True
-# compute_ref_sol = True
-# compute_est_sol = True
-
-## Post-Processing - change description of uncertainty on output
-create_int_sets = False
+create_int_sets = True
 create_data_discs = False
 compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
+create_ref_disc = True
+create_est_discs = True
 compute_ref_sol = True
 compute_est_sol = True
 
+## Post-Processing - change description of uncertainty on output
+# create_int_sets = False
+# create_data_discs = False
+# compute_emulated_set = False
+# create_ref_disc = False
+# create_est_discs = False
+# compute_ref_sol = True
+# compute_est_sol = True
+
 cwd = os.getcwd()
-results_dir = 'results_IP_ref3d'
+results_dir = 'results_IP_ref2d'
 sub_dirs = ['postprocess_rect_01', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
