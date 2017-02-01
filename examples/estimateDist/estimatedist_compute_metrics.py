@@ -33,7 +33,7 @@ for BigN in BigN_values: # reference solution resolution
                         
             
             
-            for N in pyprind.progpercent(N_values):
+            for N in pyprind.prog_percent(N_values):
                 Nval = N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') )
                 
                 temp_array = np.zeros( (num_trials, len(QoI_choice_list)) )

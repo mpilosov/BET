@@ -1,6 +1,5 @@
 from estimatedist_funs import *
 from estimatedist_setup import *
-import pyprind
 
 integration_sets_filenames = []
 ref_solutions_filenames = []
