@@ -64,9 +64,10 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr ):
     if A_samples_lost>0:
         print '\t !!!!! Integration samples lost = %4d'%(A_samples_lost)
     
-    # return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
     # THIS RETURNS THE SQUARE OF THE HELLINGER METRIC
-    return np.sqrt(0.5*(1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 ) )
+    
+    # return np.sqrt(0.5*(1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 ) )
     
     
 def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretization, QoI_indices, Emulate = False):
