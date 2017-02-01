@@ -28,7 +28,7 @@ def make_model(skew_range):
             # below with rect_size to have measures of events equal between spaces.
             # Q_map.append( [s*np.cos(theta), s*np.sin(theta)] ) 
             Q_map.append( [np.sqrt(s**2 - 1), 1, 0] )
-        Q_map = np.array ( Q_map )
+        Q_map = np.array( Q_map )
         QoI_samples = np.dot(parameter_samples, np.transpose(Q_map))
         return QoI_samples
     return my_model
