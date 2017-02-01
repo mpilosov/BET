@@ -94,8 +94,8 @@ for BigN in BigN_values: # reference solution resolution
             plt.cla()
             lines = []
             
-            ref_vec = np.array([200, 6400])
-            plt.plot(ref_vec,10./np.sqrt(ref_vec), linewidth=1.0, ls = '-', color = 'k')
+            ref_vec = np.array([np.min(N_values), np.max(N_values)])
+            plt.plot(ref_vec,10./np.power(ref_vec, 1.0/dim_input), linewidth=1.0, ls = '-', color = 'k')
 
             for qoi_idx in range(len(QoI_choice_list)):
                 lines.append( plt.plot(N_values, data_for_M[:,qoi_idx], 'h', label = 'Q(%s)'%alpha[qoi_idx]) ) # NOTE not sure if label is working correctly
@@ -118,7 +118,12 @@ for BigN in BigN_values: # reference solution resolution
             plt.yticks(fontsize=tick_fsize)
             plt.gcf().subplots_adjust(bottom=0.125,left=0.125)
             
-            plt.legend(['MC Conv. Rate', '$Q^{(a)}$', '$Q^{(b)}$'], loc = 'lower left', fontsize = legend_fsize) # NOTE: manually creating legend
+            # legend_strings = [ '$Q^{(%s)}$'%alpha[qoi_idx] for qoi_idx in range(len(QoI_choice_list))]
+            leg = ['MC Conv. Rate']
+            for qoi_idx in range(len(QoI_choice_list)):
+                leg.append( '$Q^{(%s)}$'%alpha[qoi_idx] )
+                
+            plt.legend(leg, loc = 'lower left', fontsize = legend_fsize) # NOTE: manually creating legend
             # plt.axis([20, 7500, 5E-3, 1])
             plt.savefig(new_data_filename)
             

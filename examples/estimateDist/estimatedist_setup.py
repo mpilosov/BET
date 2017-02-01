@@ -2,15 +2,15 @@ from estimatedist_funs import *
 
 dim_input = 3
 # skew_range = [n+1 for n in range(2)]
-skew_range = [1,2,4,8]
-dim_output = len(skew_range)
+skew_range = [1,2,4]
+dim_output = 2
 
 my_model = make_model(skew_range)
 sampler = bsam.sampler(my_model)
 
 dim_range_each = [0, 1]
 dim_range = np.repeat([dim_range_each], dim_input, axis=0) # np.array([ [0, 1], [0, 1] ])
-QoI_choice_list = [ [0, n+1] for n in range(dim_output)]
+QoI_choice_list = [ [0, n+1] for n in range(len(skew_range))]
 
 alpha = 1 # TODO add functionality for multiple alpha, betas - one per input_dim
 beta = 1
@@ -49,22 +49,22 @@ tick_fsize = 14
 legend_fsize = 14
 
 ## Initial Run
-create_int_sets = True
-create_data_discs = False
-compute_emulated_set = False
-create_ref_disc = True
-create_est_discs = True
-compute_ref_sol = True
-compute_est_sol = True
-
-## Post-Processing
-# create_int_sets = False
+# create_int_sets = True
 # create_data_discs = False
 # compute_emulated_set = False
-# create_ref_disc = False
-# create_est_discs = False
+# create_ref_disc = True
+# create_est_discs = True
 # compute_ref_sol = True
 # compute_est_sol = True
+
+## Post-Processing - change description of uncertainty on output
+create_int_sets = False
+create_data_discs = False
+compute_emulated_set = False
+create_ref_disc = False
+create_est_discs = False
+compute_ref_sol = True
+compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_IP_ref3d'

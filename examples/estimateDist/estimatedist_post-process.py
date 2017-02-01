@@ -1,5 +1,5 @@
 from estimatedist_setup import *
-
+# ALL this does is compute Hellinger distances.
 
 for BigN in BigN_values: # reference solution resolution
     BigNval = BigN**(1 + (dim_input-1)*(reference_mesh_type == 'reg') )
