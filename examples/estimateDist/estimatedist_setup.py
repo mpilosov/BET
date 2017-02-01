@@ -39,7 +39,7 @@ num_trials = 50
 
 ref_input = 0.5*np.ones(dim_input)
 Qref =  my_model(ref_input)
-rect_size = np.power(0.1, 1./dim_output) # make box with this sidelength 
+rect_size = np.power(0.2, 1./dim_output) # make box with this sidelength 
 
 recover = False
 
@@ -49,26 +49,26 @@ tick_fsize = 14
 legend_fsize = 14
 
 ## Initial Run
-create_int_sets = True
-create_data_discs = False
-compute_emulated_set = False
-create_ref_disc = True
-create_est_discs = True
-compute_ref_sol = True
-compute_est_sol = True
-
-## Post-Processing - change description of uncertainty on output
-# create_int_sets = False
+# create_int_sets = True
 # create_data_discs = False
 # compute_emulated_set = False
-# create_ref_disc = False
-# create_est_discs = False
+# create_ref_disc = True
+# create_est_discs = True
 # compute_ref_sol = True
 # compute_est_sol = True
 
+## Post-Processing - change description of uncertainty on output
+create_int_sets = False
+create_data_discs = False
+compute_emulated_set = False
+create_ref_disc = False
+create_est_discs = False
+compute_ref_sol = True
+compute_est_sol = True
+
 cwd = os.getcwd()
 results_dir = 'results_IP_ref2d'
-sub_dirs = ['postprocess_rect_01', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
+sub_dirs = ['postprocess_rect_02', 'integration_sets', 'est_discretizations', 'est_solutions', 'ref_solutions']
 ref_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[4] + '/' # commonly used
 est_sol_dir =  cwd + '/' + results_dir + '/' + sub_dirs[3] + '/' # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'

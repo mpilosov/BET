@@ -1,6 +1,6 @@
 from estimatedist_funs import *
 from estimatedist_setup import *
-
+import pyprind
 
 integration_sets_filenames = []
 ref_solutions_filenames = []
@@ -249,7 +249,7 @@ if compute_est_sol:
                 est_sol_dir_3 = est_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
             
             print '\t With M = %d'%(Mval)
-            for N in N_values:
+            for N in pyprind.prog_bar(N_values):
                 Nval = N**(1 + (estimate_mesh_type == 'reg') )
                 est_sol_dir_4 = est_sol_dir_3 + '%s_N_%d'%(estimate_mesh_type, Nval) + '/' # all trial sols inside this folder
                 ensure_path_exists(est_sol_dir_4)
@@ -278,7 +278,7 @@ if compute_est_sol:
                     samp.save_discretization(my_discretization, filename)
                     # est_solutions_filenames.append(filename)
                     
-                print '\t \t %d Trials Completed for N = %d'%(num_trials, Nval)
+                # print '\t \t %d Trials Completed for N = %d'%(num_trials, Nval)
                 
 # print est_solutions_filenames
 # paths_of_interest = np.array([integration_sets_filenames, ref_solutions_filenames, est_solutions_filenames, ref_sol_int_ptrs_filenames, est_sol_int_ptrs_filenames])
