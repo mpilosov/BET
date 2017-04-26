@@ -5,6 +5,7 @@ from dolfin import *
 import numpy as np
 import sys
 
+samples_file_name = 'sample_values'
 
 #time stepping info
 dt = 1./100

@@ -23,5 +23,4 @@ for i in range(len(x)):
     heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh, dt, t_stop)
 
 #output parameter and functional data to matlab file
-filename = sys.argv[1]
-sio.savemat(filename, {'samples':x})
+sio.savemat(samples_file_name, {'samples':x})
