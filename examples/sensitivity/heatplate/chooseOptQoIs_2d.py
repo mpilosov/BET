@@ -70,7 +70,7 @@ In general, ``indexstart`` can be any integer between 0 and 998  and
 of QoI.)
 '''
 indexstart = 0
-indexstop = 20
+indexstop = 400
 qoiIndices = range(indexstart, indexstop)
 
 # Initialize the necessary sample objects
@@ -99,8 +99,8 @@ else:
 input_samples_centers = center_discretization.get_input_sample_set()
 
 # Choose a specific set of QoIs to check the average skewness of
-index1 = 0
-index2 = 4
+index1 = 17
+index2 = 19
 (specific_skewness, _) = cqoi.calculate_avg_skewness(input_samples_centers,
         qoi_set=[index1, index2])
 if comm.rank == 0:
@@ -111,13 +111,13 @@ if comm.rank == 0:
 # any two QoI from the set defined by the indices selected by the
 # ``indexstart`` and ``indexend`` values
 skewness_indices_mat = cqoi.chooseOptQoIs(input_samples_centers, qoiIndices,
-    num_optsets_return=10, measure=False)
+    num_optsets_return=20, measure=False)
 
 qoi1 = skewness_indices_mat[0, 1]
 qoi2 = skewness_indices_mat[0, 2]
 
 if comm.rank == 0:
-    print 'The 10 smallest condition numbers are in the first column, the \
+    print 'The smallest condition numbers are in the first column, the \
 corresponding sets of QoIs are in the following columns.'
-    print skewness_indices_mat[:10, :]
+    print skewness_indices_mat[:, :]
 
