@@ -1,16 +1,15 @@
 import scipy.io as sio
-from simulation_2kappas_setup import nx, samples_file_name
+from simulation_2kappas_setup import nx, samples_file_name, num_samples
 import bet.sample as sample
 from dolfin import *
+import numpy as np
 
 filename = 'functionaldata'
 matfile = sio.loadmat(samples_file_name)
 # loaded_input_samples = matfile['samples']
 
-num_samples = len(loaded_input_samples) # determine number of samples
-
 # Extract QoI data from state variable T in folder Tfiles
-temp_locs = [0.25, 0.5, 0.6, 0.7, 0.8, 0.9]
+temp_locs = [0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 qoi_data = np.zeros( (num_samples, len(temp_locs)) ) # initialize empty array
 
 mesh = IntervalMesh(nx, 0, 1)
@@ -21,7 +20,7 @@ for i in range(num_samples):
     T = Function(V, file_name) # Loaded up temperature profile for each sample
     qoi_data[i] = np.array([T(xi) for xi in temp_locs]) # take temperature values at points of interest
 
-sio.savemat(filename, {'samples':x, 'data':qoi_data})
+sio.savemat(filename, {'samples':matfile['samples'], 'data':qoi_data})
 
 
 '''

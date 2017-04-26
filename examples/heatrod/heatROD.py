@@ -5,7 +5,7 @@ import numpy as np
 from simulation_2kappas_setup import *
 
 
-def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh, dt, t_stop):
+def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh, dt, t_stop, saveopt=True):
 
     #define the subspace we will solve the problem in
     V = FunctionSpace(mesh, 'Lagrange', 1)
@@ -46,7 +46,6 @@ def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh
     t = dt
    
     #time stepping
-    #flag = True
     while t <= t_stop:
     # while t <= 0.99:
         #plot(T)
@@ -63,15 +62,15 @@ def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh
         T_1.assign(T)
 
     # print t
-    filename = 'Tfiles/Tsample_' + str(i) + '.xml'
-    file = File(filename)
-    file << T
-    flag = False
-
+    if saveopt == True:    
+        filename = 'Tfiles/Tsample_' + str(i) + '.xml'
+        file = File(filename)
+        file << T
+    
        
     # plot(T)
     # interactive()
-
+    return T
 
 
 

@@ -103,6 +103,7 @@ index1 = 17
 index2 = 19
 (specific_skewness, _) = cqoi.calculate_avg_skewness(input_samples_centers,
         qoi_set=[index1, index2])
+        
 if comm.rank == 0:
     print 'The average skewness of the QoI map defined by indices ' + str(index1) + \
         ' and ' + str(index2) + ' is ' + str(specific_skewness)
