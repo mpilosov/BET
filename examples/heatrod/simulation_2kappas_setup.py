@@ -7,8 +7,8 @@ import sys
 
 
 #time stepping info
-dt = 1./10
-t_stop = 5.
+dt = 1./100
+t_stop = 1.0
 total_timesteps = t_stop/dt
 
 #Some fixed parameter values
@@ -36,7 +36,7 @@ parameters['allow_extrapolation'] = True
 
 #random sampling
 np.random.seed(0)
-num_samples = 1280
+num_samples = 10000
 x = (kappa_0_max-kappa_0_min)*np.random.random((num_samples,2)) + kappa_0_min
 
 '''

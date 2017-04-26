@@ -1,6 +1,4 @@
-
-
-"""Temperature variations of a thin (1-D) plate with a heat source 'underneath' and perfectly insulated (Neumann boundaries set to 0).  We turn the heat source off after time t_heatoff"""
+"""Temperature variations of a thin (1-D) rod with a heat source 'underneath' and perfectly insulated (Neumann boundaries set to 0).  We turn the heat source off after time t_heatoff"""
 
 from dolfin import *
 import numpy as np
@@ -49,8 +47,8 @@ def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh
    
     #time stepping
     #flag = True
-    #while t <= t_stop:
-    while t <= 0.99:
+    while t <= t_stop:
+    # while t <= 0.99:
         #plot(T)
         #interactive()
         relerrorvec = []
@@ -64,15 +62,15 @@ def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh
         t += dt
         T_1.assign(T)
 
-    print t
-    filename = 'Tsample_' + str(i) + '.xml'
+    # print t
+    filename = 'Tfiles/Tsample_' + str(i) + '.xml'
     file = File(filename)
     file << T
     flag = False
 
        
-    #plot(T)
-    #interactive()
+    # plot(T)
+    # interactive()
 
 
 
