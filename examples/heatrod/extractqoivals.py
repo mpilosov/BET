@@ -4,12 +4,12 @@ import bet.sample as sample
 from dolfin import *
 import numpy as np
 
-filename = 'functionaldata'
+filename = 'functionaldata' # place where samples and functional values are stored.
 matfile = sio.loadmat(samples_file_name)
 # loaded_input_samples = matfile['samples']
 
 # Extract QoI data from state variable T in folder Tfiles
-temp_locs = [0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+temp_locs = [0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 # temp_locs = [0.05, 0.95]
 qoi_data = np.zeros( (num_samples, len(temp_locs)) ) # initialize empty array
 
