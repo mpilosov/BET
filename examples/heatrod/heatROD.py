@@ -14,14 +14,14 @@ def heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh
     t_heatoff = t_stop/2.0
 
     #time stepping method. forward, backward, CN, etc...
-    theta = 0.5
+    theta = 1
     
     #split the domain down the middle(dif therm cond)
     kappa_str = 'x[0] > 0.5 ?'\
                    'kappa_1 : kappa_0'
 
     # Physical parameters
-    kappa = Expression(kappa_str, kappa_0=kappa_0, kappa_1=kappa_1)
+    kappa = Expression(kappa_str, kappa_0=kappa_0, kappa_1=kappa_1, degree=1)
 
     # Define initial condition(initial temp of plate)
     T_1 = interpolate(Constant(T_R), V)

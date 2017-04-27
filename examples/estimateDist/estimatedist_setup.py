@@ -3,7 +3,7 @@ import pyprind
 
 dim_input = 2
 # skew_range = [n+1 for n in range(2)]
-skew_range = [1,2,4]
+# skew_range = [1,2,4]
 dim_output = 2
 
 my_model = make_model(skew_range)

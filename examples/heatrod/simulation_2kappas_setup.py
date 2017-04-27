@@ -8,9 +8,8 @@ import sys
 samples_file_name = 'sample_values'
 
 #time stepping info
-dt = 1./100
+# dt = 1./100
 t_stop = 1.0
-total_timesteps = t_stop/dt
 
 #Some fixed parameter values
 amp = 50.0  #amplitude of the heat source
@@ -31,6 +30,9 @@ kappa_1_max = .2
 #define the mesh properties
 degree = 1
 nx = 50
+
+r = 1.0
+dt = r/nx
 
 mesh = IntervalMesh(nx, 0, 1)
 parameters['allow_extrapolation'] = True
