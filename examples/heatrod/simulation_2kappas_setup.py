@@ -24,9 +24,6 @@ rho = 1.5 #density
 kappa_0_min = .01
 kappa_0_max = .2
 
-kappa_1_min = .01
-kappa_1_max = .2
-
 #define the mesh properties
 degree = 1
 nx = 50
@@ -40,7 +37,7 @@ parameters['allow_extrapolation'] = True
 #random sampling
 np.random.seed(0)
 num_samples = 10000
-x = (kappa_0_max-kappa_0_min)*np.random.random((num_samples,2)) + kappa_0_min
+kappa_samples = (kappa_0_max-kappa_0_min)*np.random.random((num_samples,2)) + kappa_0_min
 
 '''
 #Create a uniform grid of the parameter space (kappa_0,kappa_1)

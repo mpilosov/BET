@@ -10,8 +10,6 @@ est_discretizations_filenames = [] # dont think I need this one
 
 emul_filename = ref_sol_dir + 'Emulation_Discretization_%d'%(num_samples_emulate_data_space)
 
-
-
 # Create Integration Sets
 # NOTE Dependencies: integration_mesh_type, I_values, dim_input, dim_range, temp_dir, results_dir, sub_dirs
 if create_int_sets:

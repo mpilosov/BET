@@ -14,13 +14,13 @@ from heatROD import *
 # solution_list = []
 
 #loop over each sample and call heatplate
-for i in range(len(x)):
+for i in range(len(kappa_samples)):
     print 'Sample : ', i
     print '(kappa_0, kappa_1) = ', x[i,:]
-    kappa_0 = x[i,0]
-    kappa_1 = x[i,1]
+    kappa_0 = kappa_samples[i,0]
+    kappa_1 = kappa_samples[i,1]
 
     T = heatROD(i, amp, px, width, degree, T_R, kappa_0, kappa_1, rho, cap, nx, mesh, dt, t_stop)
 
 #output parameter and functional data to matlab file
-sio.savemat(samples_file_name, {'samples':x})
+sio.savemat(samples_file_name, {'samples':kappa_samples})
