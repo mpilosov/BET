@@ -6,7 +6,7 @@ dim_output = 2
 
 dim_range = np.array([[0.01, 0.2],[0.01, 0.2]]) # parameter space domain 
 temp_locs_list = [0.125, 0.7, 0.8] # list of QoI locations 
-QoI_choice_list = [ [0, n] for n in range(1,len(temp_locs))] # first location fixed.
+QoI_choice_list = [ [0, n] for n in range(1,len(temp_locs_list))] # first location fixed.
 
 my_model = make_model(temp_locs_list)
 sampler = bsam.sampler(my_model)
@@ -21,23 +21,20 @@ num_samples_emulate_data_space = 1E5 # TODO append to Emulation_Discretization f
 
 reference_mesh_type = 'reg'
 BigN_values = [100]
-# BigN_values = [1E5]
 
 estimate_mesh_type = 'rand'
-# N_values = [2,5,10,20]
-# N_values = [50, 200, 800, 3200, 6400]
 N_values = [20*2**n for n in range(7)]
-# N_values = [4, 16, 25, 100, 400, 2500, 10000 ]
 use_volumes = False # use calculateP.prob_with_emulated_volumes or just calculateP.prob - this uses emulated points
 num_emulated_input_samples = 1E6
 
 integration_mesh_type =  'rand'
-# I_values = [1E4] # map(int, [1E3, 1E4, 1E5]) 
-I_values = [1E5]
+I_values = [1E4]
 num_trials = 10
 
-ref_input = 0.5*np.ones(dim_input)
-Qref =  my_model(ref_input)
+kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1] # reference kappas
+kappa_ref_locs = [[k1,k2] for k1 in kappa_lin for k2 in kappa_lin] # like meshgrid, only easier to parse
+ref_input = kappa_ref_locs[0]
+Qref =  my_model(np.array([ref_input]))
 rect_scale= 0.1 # make box with this sidelength 
 
 recover = False
