@@ -26,7 +26,7 @@ mean_or_var = 'Mean'
 # num_trials = 10
 # N_values = [2,5,20]
 
-line_colors = np.linspace(0.8, 0, len(skew_range)) # LIGHT TO DARK - LOW to HIGH Theta
+line_colors = np.linspace(0.8, 0, len(temp_locs_list)) # LIGHT TO DARK - LOW to HIGH Theta
 
 for BigN in BigN_values: # reference solution resolution
     BigNval = BigN**(1 + (dim_input-1)*(reference_mesh_type == 'reg') )
@@ -39,7 +39,7 @@ for BigN in BigN_values: # reference solution resolution
             data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
         
         if not recover:
-            print 'rect_size = %f'%rect_size, 'lambda_ref = ', ref_input[:], '\n'
+            print 'rect = %f'%rect, 'lambda_ref = ', ref_input[:], '\n'
         for I in I_values: # integration mesh
             Ival = I**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
             if recover:
@@ -107,7 +107,7 @@ for BigN in BigN_values: # reference solution resolution
                 if recover:
                     plt.title('Hellinger Distance with I = %d\n BigN = %d, M = %d'%(Ival, BigNval, Mval))
                 else: 
-                    plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect_size = %s, M = %d'%(Ival, BigNval, rect_size, Mval))
+                    plt.title('Hellinger Distances (I = %d, BigN = %d) for the\nParameter i.d. Problem w/ rect = %s, M = %d'%(Ival, BigNval, rect, Mval))
             
             plt.xlabel('Number of Samples', fontsize=label_fsize)
             # plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=label_fsize)

@@ -10,7 +10,7 @@ matfile = sio.loadmat(samples_file_name)
 # loaded_input_samples = matfile['samples']
 
 # Extract QoI data from state variable T in folder Tfiles
-temp_locs = [0.125, 0.7, 0.8]
+temp_locs = [0.125, 0.9, 0.7]
 # IF you change the functionals, make sure to re-run this script before getgradients
 
 # temp_locs = [0.05, 0.95]

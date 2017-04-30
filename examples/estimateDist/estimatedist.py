@@ -209,7 +209,7 @@ if compute_ref_sol:
                             '%s_BigN_%d'%(reference_mesh_type, BigNval)
                 else:        
                     ref_discretization = invert_rect_using(Ref_Discretization,
-                            QoI_indices, Qref, rect_size,
+                            QoI_indices, Qref, rect,
                             cells_per_dimension = M, Emulate = use_volumes)
                     filename = ref_sol_dir_3 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
                             '%s_M_%d'%(data_discretization_type, Mval) + '_'  + \
@@ -232,7 +232,7 @@ if compute_est_sol:
         QoI_indices = QoI_choice_list[sol_num]
         est_sol_dir_2 = est_sol_dir + 'QoI_choice_%d'%(sol_num+1) + '/'
         
-        print 'Solving Inverse Problems for Skew = %d'%(skew_range[sol_num])
+        print 'Solving Inverse Problems for QoI_%d'%(sol_num)
         for M in M_values: # for each data-space discretization
             Mval = M**(1 + (dim_input-1)*(data_discretization_type == 'reg') )
             if recover:
@@ -267,7 +267,7 @@ if compute_est_sol:
                                 '_' + '%s_N_%d'%(estimate_mesh_type, Nval) + '_trial_%d'%(trial)
                     else:
                         my_discretization = invert_rect_using(My_Discretization, 
-                                QoI_indices, Qref, rect_size, 
+                                QoI_indices, Qref, rect, 
                                 cells_per_dimension = M, Emulate = use_volumes)
                         filename = est_sol_dir_4 + 'SolQoI_choice_%d'%(sol_num+1) + '-' + \
                                 '%s_M_%d'%(data_discretization_type, Mval) + \

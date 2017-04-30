@@ -45,13 +45,14 @@ def make_model(temp_locs_list):
             kappa_0 = parameter_samples[i,0]
             kappa_1 = parameter_samples[i,1]
             
+            V = FunctionSpace(mesh, 'Lagrange', degree) # define the subspace we will solve the problem in
+
             #split the domain down the middle(dif therm cond)
-            kappa_str = 'parameter_samples[0] > 0.5 ?'\
+            kappa_str = 'x[0] > 0.5 ?'\
                            'kappa_1 : kappa_0'
                                
             # Physical parameters
             kappa = Expression(kappa_str, kappa_0=kappa_0, kappa_1=kappa_1, degree=1)
-            V = FunctionSpace(mesh, 'Lagrange', degree) # define the subspace we will solve the problem in
             # Define initial condition(initial temp of plate)
             T_current = interpolate(Constant(T_R), V)
 
@@ -175,7 +176,7 @@ def invert_using(My_Discretization, Partition_Discretization, Emulated_Discretiz
         
     return my_discretization
 
-def invert_rect_using(My_Discretization, QoI_indices, Qref, rect_size, cells_per_dimension = 1, Emulate = False):
+def invert_rect_using(My_Discretization, QoI_indices, Qref, rect, cells_per_dimension = 1, Emulate = False):
     # Take full discretization objects, a set of indices for the QoI you want 
     # to use to perform inversion, and then do so by redefining the output spaces
     # based on these indices and solving the problem as usual.
@@ -200,7 +201,7 @@ def invert_rect_using(My_Discretization, QoI_indices, Qref, rect_size, cells_per
     
     simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(my_discretization, 
             Q_ref =  Qref[QoI_indices],
-            rect_scale = rect_scale )
+            rect_scale = rect)
             
     # simpleFunP.regular_partition_uniform_distribution_rectangle_size(my_discretization, 
     #         Q_ref =  Qref[QoI_indices],

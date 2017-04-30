@@ -36,7 +36,7 @@ parameters['allow_extrapolation'] = True
 
 #random sampling
 np.random.seed(0)
-num_samples = 10000
+num_samples = 1000
 kappa_samples = (kappa_0_max-kappa_0_min)*np.random.random((num_samples,2)) + kappa_0_min
 
 '''

@@ -16,7 +16,7 @@ from heatROD import *
 #loop over each sample and call heatplate
 for i in range(len(kappa_samples)):
     print 'Sample : ', i
-    print '(kappa_0, kappa_1) = ', x[i,:]
+    print '(kappa_0, kappa_1) = ', kappa_samples[i,:]
     kappa_0 = kappa_samples[i,0]
     kappa_1 = kappa_samples[i,1]
 
