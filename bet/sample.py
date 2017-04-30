@@ -1820,10 +1820,10 @@ class rectangle_sample_set(sample_set_base):
         self._left[-1, :] = -np.inf
         self._width = self._right - self._left
         self.set_values(values)
-        if len(maxes) > 1:
-            msg = "If rectangles intersect on a set nonzero measure, "
-            msg += "calculated values will be wrong."
-            logging.warning(msg)
+        # if len(maxes) > 1:
+        #     msg = "If rectangles intersect on a set nonzero measure, "
+        #     msg += "calculated values will be wrong."
+        #     logging.warning(msg)
         self._region = np.arange(len(maxes) + 1) 
 
         
