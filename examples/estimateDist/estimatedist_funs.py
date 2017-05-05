@@ -7,6 +7,8 @@ import bet.calculateP.simpleFunP as simpleFunP
 import bet.calculateP.calculateP as calculateP
 from dolfin import * 
 
+import bet.postProcess.plotP as plotP # temporary - for plotting integrand in HD
+
 def ensure_path_exists(folder):
     try:
         os.makedirs(folder)
@@ -122,7 +124,14 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr ):
     if A_samples_lost>0:
         print '\t !!!!! Integration samples lost = %4d'%(A_samples_lost)
     
-    return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 )
+    diff = (np.sqrt(den_A) - np.sqrt(den_B) )**2
+    C = integration_sample_set.copy()
+    C.set_probabilities(diff)
+    # (bins, marginals2D) = plotP.calculate_2D_marginal_probs(C, nbins = [40, 40])
+    # plotP.plot_2D_marginal_probs(marginals2D, bins, C, filename = "heattestmap_diff",
+    #                              file_extension = ".eps", plot_surface=False)
+                                 
+    return 0.5*(1./num_int_samples)*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 ), C
     # THIS RETURNS THE SQUARE OF THE HELLINGER METRIC
     
     # return np.sqrt(0.5*(1./(num_int_samples - B_samples_lost))*np.sum( (np.sqrt(den_A) - np.sqrt(den_B) )**2 ) )
