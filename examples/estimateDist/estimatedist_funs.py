@@ -210,7 +210,8 @@ def invert_rect_using(My_Discretization, QoI_indices, Qref, rect, cells_per_dime
     
     simpleFunP.regular_partition_uniform_distribution_rectangle_scaled(my_discretization, 
             Q_ref =  Qref[QoI_indices],
-            rect_scale = rect)
+            rect_scale = rect,
+            cells_per_dimension = cells_per_dimension)
             
     # simpleFunP.regular_partition_uniform_distribution_rectangle_size(my_discretization, 
     #         Q_ref =  Qref[QoI_indices],

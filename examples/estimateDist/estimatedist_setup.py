@@ -36,7 +36,7 @@ num_trials = 25
 kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1] # reference kappas
 kappa_ref_locs = np.array([[k1,k2] for k1 in kappa_lin for k2 in kappa_lin]) # like meshgrid, only easier to parse
 
-ref_input_num = 4 # 4 is middle
+ref_input_num = 5 # 4 is middle
 ref_input = np.array([kappa_ref_locs[ref_input_num]]) # SUPER CONFUSING INDEXING NONSENSE - line 45 in estimatedist_funs
 Qref =  my_model(ref_input)[0] # BEST I COULD DO TO GET AROUND IT
 rect = 0.1 # currently scale, not size
@@ -49,22 +49,22 @@ tick_fsize = 14
 legend_fsize = 14
 
 ## Initial Run
-create_int_sets = True
-create_data_discs = False
-compute_emulated_set = False
-create_ref_disc = True
-create_est_discs = True
-compute_ref_sol = True
-compute_est_sol = True
-
-# ## Post-Processing - change description of uncertainty on output
-# create_int_sets = False
+# create_int_sets = True
 # create_data_discs = False
 # compute_emulated_set = False
-# create_ref_disc = False
-# create_est_discs = False
+# create_ref_disc = True
+# create_est_discs = True
 # compute_ref_sol = True
 # compute_est_sol = True
+
+# ## Post-Processing - change description of uncertainty on output
+create_int_sets = False
+create_data_discs = False
+compute_emulated_set = False
+create_ref_disc = False
+create_est_discs = False
+compute_ref_sol = True
+compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_heatrod_3'

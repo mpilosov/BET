@@ -12,11 +12,12 @@ from estimatedist_setup import ref_input
 for qchoice in xrange(1,3):
     trial = 1
     n_samples = 2560
-    file_name_ref = 'results_heatrod_2/ref_solutions/reg_BigN_40000/reg_M_1/SolQoI_choice_%d-reg_M_1_reg_BigN_40000.mat'%qchoice
-    file_name_est = 'results_heatrod_2/est_solutions/QoI_choice_%d/reg_M_1/rand_N_%d/SolQoI_choice_%d-reg_M_1_rand_N_%d_trial_%d.mat'%(qchoice,n_samples,qchoice,n_samples,trial)
+    M = 9
+    file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_40000.mat'%(M,qchoice,M)
+    file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d.mat'%(qchoice,M,n_samples,qchoice,M,n_samples,trial)
     
-    file_name_diff = 'results_heatrod_2/diff_t1_N20.mat'
-    mysamp_diff = samp.load_sample_set(file_name_diff)
+    # file_name_diff = 'results_heatrod_2/diff_t1_N20.mat'
+    # mysamp_diff = samp.load_sample_set(file_name_diff)
     
     mydisc_ref = samp.load_discretization(file_name_ref)
     mydisc_est = samp.load_discretization(file_name_est)
