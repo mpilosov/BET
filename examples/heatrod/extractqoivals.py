@@ -13,8 +13,8 @@ matfile = sio.loadmat(samples_file_name)
 # temp_locs = [0.1, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 0.95]
 # temp_locs = [g/100.0 for g in range(1,100)]
 # temp_locs = [0.125, 0.9, 0.7] # list of QoI locations 
-temp_locs2 = [0.25, 0.51, 0.67, 0.98]
-temp_locs = [temp_locs2[i]+.01 for i in range(4)]
+temp_locs = [0.25, 0.51, 0.67, 0.98]
+# temp_locs = [temp_locs2[i]+.01 for i in range(4)]
 # IF you change the functionals, make sure to re-run this script before getgradients
 
 # temp_locs = [0.05, 0.95]
