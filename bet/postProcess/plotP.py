@@ -221,6 +221,7 @@ def plot_1D_marginal_probs(marginals, bins, sample_set,
                 label1 = lambda_label[i]
             ax.set_xlabel(label1) 
             ax.set_ylabel(r'$\rho$')
+            plt.tight_layout()
             fig.savefig(filename + "_1D_" + str(i) + file_extension,
                     transparent=True) 
             if interactive:
