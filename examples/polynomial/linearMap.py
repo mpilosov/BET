@@ -2,6 +2,7 @@
 
 # Copyright (C) 2014-2016 The BET Development Team
 
+#TODO Edit description 
 """
 This example solves a stochastic inverse problem for a
 linear 3-to-2 map. We refer to the map as the QoI map,
@@ -41,11 +42,14 @@ from myModel import my_model
 # and it allows BET to create input/output samples of the model.
 sampler = bsam.sampler(my_model)
 
-# Initialize 3-dimensional input parameter sample set object
-input_samples = samp.sample_set(3)
+# Initialize 4-dimensional input parameter sample set object
+input_samples = samp.sample_set(4)
 
-# Set parameter domain
-input_samples.set_domain(np.repeat([[0.0, 1.0]], 3, axis=0))
+# Set parameter domain (ordering is [a, b, c, n] )
+input_samples.set_domain(np.array([ [-10.0, 10.0],
+                                    [-10.0, 10.0], 
+                                    [-5.0, 5.0], 
+                                    [-3.0, 3.0] ]))
 
 '''
 Suggested changes for user:
@@ -60,11 +64,14 @@ If using regular sampling, try different numbers of samples
 per dimension.
 '''
 # Generate samples on the parameter space
-randomSampling = False
+num_input_samples = 18E4 # Note 20,000 samples is similar to what the regular grid would use
+grid_factor = 1 # for regular sampling only. how many per interval.
+randomSampling = True
 if randomSampling is True:
-    input_samples = sampler.random_sample_set('random', input_samples, num_samples=1E3)
+    input_samples = sampler.random_sample_set('random', input_samples, num_samples=num_input_samples)
 else:
-    input_samples = sampler.regular_sample_set(input_samples, num_samples_per_dim=[15, 15, 10])
+    # if regular sampling, use the integer grid in uncertainty box. 24,000 samples.
+    input_samples = sampler.regular_sample_set(input_samples, num_samples_per_dim=grid_factor*np.array([20, 20, 10, 6])) 
 
 '''
 Suggested changes for user:
@@ -78,35 +85,28 @@ if different numbers of points are used to estimate the volumes of
 the Voronoi cells.
 '''
 MC_assumption = True
+start_time = time.time()
 # Estimate volumes of Voronoi cells associated with the parameter samples
 if MC_assumption is False:
-    input_samples.estimate_volume(n_mc_points=1E5)
+    input_samples.estimate_volume(n_mc_points=num_input_samples*50.0)
 else:
     input_samples.estimate_volume_mc()
 
 # Create the discretization object using the input samples
 my_discretization = sampler.compute_QoI_and_create_discretization(input_samples,
-                                               savefile = '3to2_discretization.txt.gz')
-
+                                               savefile = '4to4_discretization.txt.gz')
 '''
 Suggested changes for user:
 
 Try different reference parameters.
 '''
 # Define the reference parameter
-param_ref = np.array([0.5, 0.5, 0.5])
-#param_ref = np.array([0.75, 0.75, 0.5])
-#param_ref = np.array([0.75, 0.75, 0.75])
-#param_ref = np.array([0.5, 0.5, 0.75])
-
-# Compute the reference QoI
-Q_ref =  my_model(param_ref)
-
-# Create some plots of input and output discretizations
-plotD.scatter_2D_multi(input_samples, ref_sample= param_ref, showdim = 'all',
-                       filename = 'linearMap_ParameterSamples',
-                       file_extension = '.eps')
-plotD.show_data_domain_2D(my_discretization, Q_ref = Q_ref, file_extension='.eps')
+a = 20*np.random.rand()-10 # choose any a between -10 and 10
+# pick any one of the analytical solutions [a,b,c,n]
+ref_param = np.array([[a, 1.0, -a, 0.0]])
+# ref_param = np.array([[a, 1.0-a, 0.0, 1.0]])
+Q_ref =  my_model(np.array(ref_param))
+print ref_param[0], '=>', Q_ref[0]
 
 '''
 Suggested changes for user:
@@ -145,22 +145,26 @@ and other similar methods), but we have not incorporated these into the code
 as lower-dimensional marginal plots generally have limited value in understanding
 the structure of a high dimensional non-parametric probability measure.
 '''
+plot_disc = 10 # plotting discretization
+
 # calculate 2d marginal probs
-(bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples,
-                                                        nbins = [10, 10, 10])
+(bins2D, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples,
+                                                        nbins = plot_disc*np.ones(4))
 
 # smooth 2d marginals probs (optional)
-marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.2)
+# marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.2)
 
 # plot 2d marginals probs
 plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "linearMap",
-                             lam_ref=param_ref, file_extension = ".eps", plot_surface=False)
+                             lam_ref=ref_param[0], file_extension = ".eps", plot_surface=False)
 
 # calculate 1d marginal probs
-(bins, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples,
-                                                        nbins = [10, 10, 10])
+(bins1D, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples,
+#                                                         nbins = plot_disc*np.ones(4))
+                                                        nbins = plot_disc*np.array([20, 20, 10, 6]))
 # smooth 1d marginal probs (optional)
-marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.2)
+marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
+
 # plot 2d marginal probs
 plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "linearMap",
-                             lam_ref=param_ref, file_extension = ".eps")
+                             lam_ref=ref_param[0], file_extension = ".eps")
