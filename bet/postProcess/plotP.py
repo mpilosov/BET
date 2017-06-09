@@ -309,8 +309,10 @@ def plot_2D_marginal_probs(marginals, bins, sample_set,
             cb.set_label(label_cbar, size=20)
             plt.axis([lam_domain[i][0], lam_domain[i][1], lam_domain[j][0],
                 lam_domain[j][1]]) 
+            plt.tight_layout()
             fig.savefig(filename + "_2D_" + str(i) + "_" + str(j) +\
                     file_extension, transparent=True)
+            
             if interactive:
                 plt.show()
             else:
