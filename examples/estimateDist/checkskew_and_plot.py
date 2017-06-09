@@ -13,29 +13,29 @@ for qchoice in xrange(1,3):
     trial = 1
     n_samples = 2560
     BigN = BigN_values[0]**dim_input
-    M = 9
-    file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d.mat'%(M,qchoice,M,BigN)
-    file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d.mat'%(qchoice,M,n_samples,qchoice,M,n_samples,trial)
-    
-    # file_name_diff = 'results_heatrod_2/diff_t1_N20.mat'
-    # mysamp_diff = samp.load_sample_set(file_name_diff)
-    
-    mydisc_ref = samp.load_discretization(file_name_ref)
-    mydisc_est = samp.load_discretization(file_name_est)
-    # mydisc_sk = grad.calculate_gradients_rbf(mydisc,num_centers=50, num_neighbors = 10)
-    # print cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0]
+    for M in [1,4,9]:
+        file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d.mat'%(M,qchoice,M,BigN)
+        file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d.mat'%(qchoice,M,n_samples,qchoice,M,n_samples,trial)
+        
+        # file_name_diff = 'results_heatrod_2/diff_t1_N20.mat'
+        # mysamp_diff = samp.load_sample_set(file_name_diff)
+        
+        mydisc_ref = samp.load_discretization(file_name_ref)
+        mydisc_est = samp.load_discretization(file_name_est)
+        # mydisc_sk = grad.calculate_gradients_rbf(mydisc,num_centers=50, num_neighbors = 10)
+        # print cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0]
 
-    input_samples_ref = mydisc_ref._input_sample_set
-    input_samples_est = mydisc_est._input_sample_set
-    
-    # calculate 2d marginal probs, plot
-    (bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples_ref, nbins = [40, 40])
-    plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples_est, filename = "%s/figures/M%d/refheat_M%dN%d_Q%dpt%d"%(results_dir,M,M,BigN,qchoice,ref_input_num+1),
-                                 lam_ref=ref_input[0], file_extension = ".eps", plot_surface=False)
+        input_samples_ref = mydisc_ref._input_sample_set
+        input_samples_est = mydisc_est._input_sample_set
+        
+        # calculate 2d marginal probs, plot
+        (bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples_ref, nbins = [40, 40])
+        plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples_est, filename = "%s/figures/M%d/refheat_pt%dQ%d_M%dN%d"%(results_dir,M, ref_input_num,qchoice, M,BigN),
+                                     lam_ref=ref_input[0], file_extension = ".eps", plot_surface=False)
 
-    (bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples_est, nbins = [40, 40])
-    plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples_est, filename = "%s/figures/M%d/estheat_M%dN%d_Q%dpt%d"%(results_dir,M,M,n_samples,qchoice,ref_input_num+1),
-                                 lam_ref=ref_input[0], file_extension = ".eps", plot_surface=False)
+        (bins, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples_est, nbins = [40, 40])
+        plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples_est, filename = "%s/figures/M%d/estheat_pt%dQ%d_M%dN%d"%(results_dir,M, ref_input_num,qchoice, M,n_samples),
+                                     lam_ref=ref_input[0], file_extension = ".eps", plot_surface=False)
     # 
     # A_prob = set_A._probabilities[set_A_ptr]
     # A_vol = set_A._volumes[set_A_ptr]
