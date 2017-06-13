@@ -4,7 +4,7 @@ import bet.sensitivity.gradients as grad
 import bet.postProcess.plotP as plotP
 import numpy as np
 from estimatedist_setup import ref_input, ref_input_num, results_dir, BigN_values, dim_input
-# mydisc=samp.load_discretization('results_heatrod/est_discretizations/rand_N_1280/rand_N_1280_trial_1.mat')
+mydisc=samp.load_discretization('results_heatrod_3/est_discretizations/rand_N_1280/rand_N_1280_trial_1.mat')
 # mydisc = grad.calculate_gradients_rbf(mydisc,1)
 # cqoi.calculate_avg_skewness(mydisc._input_sample_set,[0,2])[0]
 
@@ -22,8 +22,8 @@ for qchoice in xrange(1,3):
         
         mydisc_ref = samp.load_discretization(file_name_ref)
         mydisc_est = samp.load_discretization(file_name_est)
-        # mydisc_sk = grad.calculate_gradients_rbf(mydisc,num_centers=50, num_neighbors = 10)
-        # print cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0]
+        mydisc_sk = grad.calculate_gradients_rbf(mydisc_ref,num_centers=20, num_neighbors = 5)
+        print cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0]
 
         input_samples_ref = mydisc_ref._input_sample_set
         input_samples_est = mydisc_est._input_sample_set
