@@ -90,20 +90,26 @@ def prob(discretization, globalize=True):
     if discretization._input_sample_set._values_local is None:
         discretization._input_sample_set.global_to_local()
     P_local = np.zeros((len(discretization._io_ptr_local),))
+    op_bins, op_pos = 0, 0 # count number of nonempty bins
     for i in xrange(op_num):
         if discretization._output_probability_set._probabilities[i] > 0.0:
+            op_bins += 1
             Itemp = np.equal(discretization._io_ptr_local, i)
             Itemp_sum = np.sum(discretization._input_sample_set.\
                     _volumes_local[Itemp])
             Itemp_sum = comm.allreduce(Itemp_sum, op=MPI.SUM)
-            if Itemp_sum > 0:            
+            if Itemp_sum > 0:    
+                op_pos += 1        
                 P_local[Itemp] = discretization._output_probability_set.\
                         _probabilities[i]*discretization._input_sample_set.\
                         _volumes_local[Itemp]/Itemp_sum
+    # P_local=op_bins*np.divide(P_local,op_pos) # normalize
+    P_local*=np.float(op_bins)/op_pos
     if globalize:
         discretization._input_sample_set._probabilities = util.\
                                         get_global_values(P_local)
     discretization._input_sample_set._probabilities_local = P_local
+    
 
 def prob_with_emulated_volumes(discretization): 
     r"""
