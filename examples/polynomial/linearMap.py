@@ -127,7 +127,7 @@ else:
 
 # calculate probablities
 calculateP.prob(my_discretization)
-
+samp.save_discretization(my_discretization, 'mydisc')
 ########################################
 # Post-process the results
 ########################################
@@ -145,26 +145,26 @@ and other similar methods), but we have not incorporated these into the code
 as lower-dimensional marginal plots generally have limited value in understanding
 the structure of a high dimensional non-parametric probability measure.
 '''
-plot_disc = 10 # plotting discretization
+#plot_disc = 10 # plotting discretization
 
 # calculate 2d marginal probs
-(bins2D, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples,
+#(bins2D, marginals2D) = plotP.calculate_2D_marginal_probs(input_samples,
                                                         nbins = plot_disc*np.ones(4))
 
 # smooth 2d marginals probs (optional)
 # marginals2D = plotP.smooth_marginals_2D(marginals2D, bins, sigma=0.2)
 
 # plot 2d marginals probs
-plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "linearMap",
+#plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples, filename = "linearMap",
                              lam_ref=ref_param[0], file_extension = ".eps", plot_surface=False)
 
 # calculate 1d marginal probs
-(bins1D, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples,
+#(bins1D, marginals1D) = plotP.calculate_1D_marginal_probs(input_samples,
 #                                                         nbins = plot_disc*np.ones(4))
                                                         nbins = plot_disc*np.array([20, 20, 10, 6]))
 # smooth 1d marginal probs (optional)
-marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
+#marginals1D = plotP.smooth_marginals_1D(marginals1D, bins, sigma=0.1)
 
 # plot 2d marginal probs
-plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "linearMap",
+#plotP.plot_1D_marginal_probs(marginals1D, bins, input_samples, filename = "linearMap",
                              lam_ref=ref_param[0], file_extension = ".eps")
