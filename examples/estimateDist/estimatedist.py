@@ -118,7 +118,7 @@ if create_data_discs:
             #     lin_mesh.append( np.linspace(each_dim_range[0], each_dim_range[1], M+1) )
             # Partition_Set.setup(lin_mesh)
             
-            Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(M, dim_input, axis=0))
+            Partition_Set = bsam.regular_sample_set(Partition_Set, num_samples_per_dim = np.repeat(M, dim_output, axis=0))
         else: # random mesh for partition
             Partition_Set = bsam.random_sample_set('random',
                     Partition_Set, num_samples = M)
