@@ -82,7 +82,7 @@ def make_model(temp_locs_list):
 
             T = Function(V)
             t = dt  # initialize first time step
-
+            print("%d Starting timestepping."%i)
             # time stepping method is BWD Euler. (theta = 1)
             while t <= t_stop:
                 if t < t_heatoff:
