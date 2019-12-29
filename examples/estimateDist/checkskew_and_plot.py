@@ -5,7 +5,7 @@ import bet.postProcess.plotP as plotP
 import numpy as np
 from estimatedist_setup import ref_input, ref_input_num, results_dir, BigN_values, dim_input
 mydisc = samp.load_discretization(
-    'results_heatrod_3/est_discretizations/rand_N_1280/rand_N_1280_trial_1.mat')
+    'results_heatrod_3/est_discretizations/rand_N_1280/rand_N_1280_trial_1')
 # mydisc = grad.calculate_gradients_rbf(mydisc,1)
 # cqoi.calculate_avg_skewness(mydisc._input_sample_set,[0,2])[0]
 
@@ -15,12 +15,12 @@ for qchoice in range(1, 3):
     n_samples = 2560
     BigN = BigN_values[0]**dim_input
     for M in [1, 4, 9]:
-        file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d.mat' % (
+        file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d' % (
             M, qchoice, M, BigN)
-        file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d.mat' % (
+        file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d' % (
             qchoice, M, n_samples, qchoice, M, n_samples, trial)
 
-        # file_name_diff = 'results_heatrod_2/diff_t1_N20.mat'
+        # file_name_diff = 'results_heatrod_2/diff_t1_N20'
         # mysamp_diff = samp.load_sample_set(file_name_diff)
 
         mydisc_ref = samp.load_discretization(file_name_ref)
