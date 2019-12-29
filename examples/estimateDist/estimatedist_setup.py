@@ -20,15 +20,16 @@ beta = 1
 
 # regular or random for all of them.
 data_discretization_type = 'reg'
-M_values = [1, 2, 3]
+M_values = [1]
 # TODO append to Emulation_Discretization filename
 num_samples_emulate_data_space = 1E5
 
 reference_mesh_type = 'reg'
-BigN_values = [200]
+BigN_values = [100]
 
 estimate_mesh_type = 'rand'
-N_values = [20*2**n for n in range(8)]
+# N_values = [20*2**n for n in range(8)]
+N_values = [100, 500, 1000]
 # use calculateP.prob_with_emulated_volumes or just calculateP.prob - this uses emulated points
 use_volumes = False
 num_emulated_input_samples = 1E6
@@ -37,7 +38,9 @@ integration_mesh_type = 'rand'
 I_values = [1E5]
 num_trials = 25
 
-kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1]  # reference kappas
+# different reference kappas: regular grid in center of space.
+# only one is chosen (ref_input_num) for simulation.
+kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1]  
 # like meshgrid, only easier to parse
 kappa_ref_locs = np.array([[k1, k2] for k1 in kappa_lin for k2 in kappa_lin])
 
@@ -54,22 +57,26 @@ tick_fsize = 14
 legend_fsize = 14
 
 # Initial Run
-# create_int_sets = True
-# create_data_discs = True
-# compute_emulated_set = False
-# create_ref_disc = True
-# create_est_discs = True
-# compute_ref_sol = True
-# compute_est_sol = True
+create_int_sets = True
+create_data_discs = True
+compute_emulated_set = False
+
+create_ref_disc = True
+compute_ref_sol = True
+
+create_est_discs = True
+compute_est_sol = True
 
 # ## Post-Processing - change description of uncertainty on output
-create_int_sets = False
-create_data_discs = False
-compute_emulated_set = False
-create_ref_disc = False
-create_est_discs = False
-compute_ref_sol = True
-compute_est_sol = False
+# create_int_sets = False
+# create_data_discs = False
+# compute_emulated_set = False
+
+# create_ref_disc = False
+# compute_ref_sol = True
+
+# create_est_discs = False
+# compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_heatrod_3'
