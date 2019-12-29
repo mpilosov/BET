@@ -92,11 +92,11 @@ for BigN in BigN_values:  # reference solution resolution
             if recover:
                 new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d' % (reference_mesh_type, BigNval) + \
                     '_' + '%s_RM_%d' % (data_discretization_type, Mval) + '_' + \
-                    '%s_I_%d' % (integration_mesh_type, Ival) + '.eps'
+                    '%s_I_%d' % (integration_mesh_type, Ival) + '.png'
             else:
                 new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d' % (reference_mesh_type, BigNval) + \
                     '_' + '%s_M_%d' % (data_discretization_type, Mval) + '_' + \
-                    '%s_I_%d' % (integration_mesh_type, Ival) + '.eps'
+                    '%s_I_%d' % (integration_mesh_type, Ival) + '.png'
             plt.cla()
             lines = []
 
