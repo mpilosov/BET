@@ -64,7 +64,7 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
     C.set_probabilities(diff)
     # (bins, marginals2D) = plotP.calculate_2D_marginal_probs(C, nbins = [40, 40])
     # plotP.plot_2D_marginal_probs(marginals2D, bins, C, filename = "heattestmap_diff",
-    #                              file_extension = ".eps", plot_surface=False)
+    #                              file_extension = ".png", plot_surface=False)
 
     return 0.5*(1./num_int_samples)*np.sum((np.sqrt(den_A) - np.sqrt(den_B))**2), C
     # THIS RETURNS THE SQUARE OF THE HELLINGER METRIC
@@ -138,7 +138,7 @@ def invert_rect_using(My_Discretization, QoI_indices, Qref, rect, cells_per_dime
     output_samples.set_values(output_samples._values[:, QoI_indices])
 
     output_samples.global_to_local()
-
+    print("Reference QoI:", Qref[QoI_indices])
     my_discretization = samp.discretization(input_sample_set=input_samples,
                                             output_sample_set=output_samples)
     if Emulate:
@@ -164,3 +164,4 @@ def invert_rect_using(My_Discretization, QoI_indices, Qref, rect, cells_per_dime
         calculateP.prob(my_discretization)
 
     return my_discretization
+
