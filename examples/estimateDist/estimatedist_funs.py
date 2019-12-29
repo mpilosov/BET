@@ -7,6 +7,7 @@ import bet.calculateP.simpleFunP as simpleFunP
 import bet.calculateP.calculateP as calculateP
 
 import bet.postProcess.compareP as compP
+from heatrod_model import *
 
 # temporary - for plotting integrand in HD
 # import bet.postProcess.plotP as plotP

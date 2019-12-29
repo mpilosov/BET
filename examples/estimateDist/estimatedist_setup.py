@@ -1,6 +1,6 @@
 from estimatedist_funs import *
 import pyprind
-from heatrod_model import make_model
+
 
 
 dim_input = 2
