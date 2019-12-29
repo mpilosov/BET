@@ -36,7 +36,7 @@ num_emulated_input_samples = 1E6
 
 integration_mesh_type = 'rand'
 I_values = [1E5]
-num_trials = 25
+num_trials = 10
 
 # different reference kappas: regular grid in center of space.
 # only one is chosen (ref_input_num) for simulation.

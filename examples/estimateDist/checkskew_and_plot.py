@@ -4,6 +4,8 @@ import bet.sensitivity.gradients as grad
 import bet.postProcess.plotP as plotP
 import numpy as np
 from estimatedist_setup import ref_input, ref_input_num, results_dir, BigN_values, dim_input
+from estimatedist_funs import ensure_path_exists
+
 # mydisc = samp.load_discretization(
 #     'results_heatrod_3/est_discretizations/rand_N_1280/rand_N_1280_trial_1')
 # mydisc = grad.calculate_gradients_rbf(mydisc,1)
@@ -12,11 +14,10 @@ from estimatedist_setup import ref_input, ref_input_num, results_dir, BigN_value
 # qchoice = 1
 for qchoice in range(1, 3):
     trial = 1
-    n_samples = 2560
+    n_samples = 1000
     BigN = BigN_values[0]**dim_input
     for M in [1]:
-        file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_40000/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d' % (
-            M, qchoice, M, BigN)
+        file_name_ref = 'results_heatrod_3/ref_solutions/reg_BigN_%d/reg_M_%d/SolQoI_choice_%d-reg_M_%d_reg_BigN_%d' % (BigN, M, qchoice, M, BigN)
         file_name_est = 'results_heatrod_3/est_solutions/QoI_choice_%d/reg_M_%d/rand_N_%d/SolQoI_choice_%d-reg_M_%d_rand_N_%d_trial_%d' % (
             qchoice, M, n_samples, qchoice, M, n_samples, trial)
 
@@ -37,6 +38,7 @@ for qchoice in range(1, 3):
         # calculate 2d marginal probs, plot
         (bins, marginals2D) = plotP.calculate_2D_marginal_probs(
             input_samples_ref, nbins=[40, 40])
+        ensure_path_exists('%s/figures/M%d/'%(results_dir, M))
         plotP.plot_2D_marginal_probs(marginals2D, bins, input_samples_est, filename="%s/figures/M%d/refheat_pt%dQ%d_M%dN%d" % (results_dir, M, ref_input_num, qchoice, M, BigN),
                                      lam_ref=ref_input[0], file_extension=".png", plot_surface=False)
 
