@@ -5,3 +5,4 @@ gh-pages/
 *.pyc
 *~
 build/
+.ipynb_checkpoints/
