@@ -54,7 +54,7 @@ for BigN in BigN_values:  # reference solution resolution
                     '_' + '%s_M_%d' % (data_discretization_type, Mval) + '_' + \
                     '%s_I_%d' % (integration_mesh_type, Ival)
 
-            D = np.load(data_filename + '.npy')
+            D = np.load(data_filename + '.npy', allow_pickle=True)
             D = D.item()
             # data_dict = { (N**(1 + (dim_input-1)*(estimate_mesh_type == 'reg') )) : {} for N in N_values }
             if mean_or_var == 'Mean':

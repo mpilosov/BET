@@ -57,26 +57,28 @@ tick_fsize = 14
 legend_fsize = 14
 
 # Initial Run
-create_int_sets = True
-create_data_discs = True
-compute_emulated_set = False
-
-create_ref_disc = True
-compute_ref_sol = True
-
-create_est_discs = True
-compute_est_sol = True
-
-# ## Post-Processing - change description of uncertainty on output
-# create_int_sets = False
-# create_data_discs = False
+# create_int_sets = True
+# create_data_discs = True
 # compute_emulated_set = False
 
-# create_ref_disc = False
-# compute_ref_sol = True
+# create_ref_disc = True
+# compute_ref_sol = False
 
-# create_est_discs = False
-# compute_est_sol = True
+# create_est_discs = True
+# compute_est_sol = False
+
+# need to run build_pointers before uncommenting next section.
+
+# ## Post-Processing - change description of uncertainty on output
+create_int_sets = False
+create_data_discs = False
+compute_emulated_set = False
+
+create_ref_disc = False
+compute_ref_sol = True
+
+create_est_discs = False
+compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_heatrod_3'
