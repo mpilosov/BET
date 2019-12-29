@@ -1,4 +1,5 @@
 from dolfin import *
+import numpy as np
 
 def make_model(temp_locs_list):
     # heatrod code here - including all settings
