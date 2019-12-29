@@ -42,9 +42,8 @@ kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1]  # reference kappas
 kappa_ref_locs = np.array([[k1, k2] for k1 in kappa_lin for k2 in kappa_lin])
 
 ref_input_num = 5  # 4 is middle
-# SUPER CONFUSING INDEXING NONSENSE - line 45 in estimatedist_funs
 ref_input = np.array([kappa_ref_locs[ref_input_num]])
-Qref = my_model(ref_input)[0]  # BEST I COULD DO TO GET AROUND IT
+Qref = my_model(ref_input)[0]
 rect = 0.1  # currently scale, not size
 
 recover = False
@@ -55,22 +54,22 @@ tick_fsize = 14
 legend_fsize = 14
 
 # Initial Run
-create_int_sets = True
-create_data_discs = True
-compute_emulated_set = False
-create_ref_disc = True
-create_est_discs = True
-compute_ref_sol = True
-compute_est_sol = True
-
-# ## Post-Processing - change description of uncertainty on output
-# create_int_sets = False
-# create_data_discs = False
+# create_int_sets = True
+# create_data_discs = True
 # compute_emulated_set = False
-# create_ref_disc = False
-# create_est_discs = False
+# create_ref_disc = True
+# create_est_discs = True
 # compute_ref_sol = True
 # compute_est_sol = True
+
+# ## Post-Processing - change description of uncertainty on output
+create_int_sets = False
+create_data_discs = False
+compute_emulated_set = False
+create_ref_disc = False
+create_est_discs = False
+compute_ref_sol = True
+compute_est_sol = False
 
 cwd = os.getcwd()
 results_dir = 'results_heatrod_3'
@@ -81,3 +80,5 @@ ref_sol_dir = cwd + '/' + results_dir + \
 est_sol_dir = cwd + '/' + results_dir + \
     '/' + sub_dirs[3] + '/'  # commonly used
 data_dir = cwd + '/' + results_dir + '/' + sub_dirs[0] + '/'
+
+
