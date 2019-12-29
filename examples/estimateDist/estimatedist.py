@@ -3,6 +3,7 @@ import sys
 import pyprind
 from estimatedist_funs import *
 from matplotlib import pyplot as plt
+# from heatrod_model import make_model
 
 from estimatedist_setup import *
 '''

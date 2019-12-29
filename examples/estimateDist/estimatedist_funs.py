@@ -5,7 +5,6 @@ import bet.sample as samp
 import bet.sampling.basicSampling as bsam
 import bet.calculateP.simpleFunP as simpleFunP
 import bet.calculateP.calculateP as calculateP
-from heatrod import make_model
 
 import bet.postProcess.compareP as compP
 
@@ -20,7 +19,15 @@ def ensure_path_exists(folder):
         if exception.errno != errno.EEXIST:
             raise
 
-
+def mc_Hell(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
+    metric = compP.comparison(comparison_sample_set=integration_sample_set,
+                     sample_set_left=set_A,
+                     ptr_left=set_A_ptr,
+                     sample_set_right=set_B,
+                     ptr_right=set_B_ptr
+                    )
+    return metric.value(functional='hellinger')
+    
 def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
     # Aset, Bset are sample_set type objects, to be evaluated at the points in
     # integration_sample_set. the pointers are from integration set into the others
