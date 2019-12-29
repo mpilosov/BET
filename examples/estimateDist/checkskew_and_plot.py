@@ -9,7 +9,7 @@ mydisc=samp.load_discretization('results_heatrod_3/est_discretizations/rand_N_12
 # cqoi.calculate_avg_skewness(mydisc._input_sample_set,[0,2])[0]
 
 # qchoice = 1
-for qchoice in xrange(1,3):
+for qchoice in range(1,3):
     trial = 1
     n_samples = 2560
     BigN = BigN_values[0]**dim_input
@@ -23,7 +23,7 @@ for qchoice in xrange(1,3):
         mydisc_ref = samp.load_discretization(file_name_ref)
         mydisc_est = samp.load_discretization(file_name_est)
         mydisc_sk = grad.calculate_gradients_rbf(mydisc_ref,num_centers=20, num_neighbors = 5)
-        print cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0]
+        print(cqoi.calculate_avg_skewness(mydisc_sk._input_sample_set,[0,1])[0])
 
         input_samples_ref = mydisc_ref._input_sample_set
         input_samples_est = mydisc_est._input_sample_set

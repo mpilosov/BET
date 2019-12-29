@@ -39,7 +39,7 @@ for BigN in BigN_values: # reference solution resolution
             data_dir_3 = data_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
         
         if not recover:
-            print 'rect = %f'%rect, 'lambda_ref = ', ref_input[:], '\n'
+            print('rect = %f'%rect, 'lambda_ref = ', ref_input[:], '\n')
         for I in I_values: # integration mesh
             Ival = I**(1 + (dim_input-1)*(integration_mesh_type == 'reg') )
             if recover:
@@ -61,7 +61,7 @@ for BigN in BigN_values: # reference solution resolution
             
             alpha = ['a', 'b','c','d','e','f','g']
             
-            print 'Integration Mesh I = %d'%Ival, 'Data Discretization M = %d'%Mval
+            print('Integration Mesh I = %d'%Ival, 'Data Discretization M = %d'%Mval)
             
             str1 = '\\begin{table}[h!]\n\\begin{tabular}{ c '
             for qoi_idx in range(len(QoI_choice_list)):
@@ -80,9 +80,9 @@ for BigN in BigN_values: # reference solution resolution
                     str1 += ' & $%2.2E$'%data_for_M[i][j]
                 str1 += '\\\\ \\hline \n \n'
             str1 += '\\end{tabular}\n\\end{table}'
-            print str1
+            print(str1)
             
-            print '\n\n'
+            print('\n\n')
             if recover:
                 new_data_filename = data_dir_3 + 'Plot-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) + \
                         '_' + '%s_RM_%d'%(data_discretization_type, Mval) + '_' + \

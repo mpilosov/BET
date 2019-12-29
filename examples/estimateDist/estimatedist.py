@@ -119,7 +119,7 @@ if create_int_sets:
                     integration_sample_set, num_samples = I)
         integration_sample_set.estimate_volume_mc()
         samp.save_sample_set(integration_sample_set, filename)
-    print 'Integration Sets Computed'    
+    print('Integration Sets Computed')    
 
 
 
@@ -155,8 +155,8 @@ if create_ref_disc:
         
         ref_filename = ref_sol_dir_2 + 'Reference_Disc-' + '%s_BigN_%d'%(reference_mesh_type, BigNval) 
         samp.save_discretization(Ref_Discretization, ref_filename )
-    print 'Reference Discretizations Computed\n'
-    print '\t You can now run python estimatedist_build_pointers.py'
+    print('Reference Discretizations Computed\n')
+    print('\t You can now run python estimatedist_build_pointers.py')
 
 
 
@@ -204,7 +204,7 @@ if create_data_discs:
                 '%s_M_%d'%(data_discretization_type, Mval)
         
         samp.save_discretization(Partition_Discretization, part_filename)
-    print 'Data Space Discretizations Created'
+    print('Data Space Discretizations Created')
     
     
 
@@ -245,7 +245,7 @@ if create_est_discs:
                 emulated_input_samples = bsam.random_sample_set('random', emulated_input_samples, num_samples = num_emulated_input_samples)
                 My_Discretization.set_emulated_input_sample_set(emulated_input_samples)
             samp.save_discretization(My_Discretization, filename)
-        print '\t Estimated Solution Discretizations for N = %d Computed'%(Nval)
+        print('\t Estimated Solution Discretizations for N = %d Computed'%(Nval))
     # print est_discretizations_filenames
 
 
@@ -296,7 +296,7 @@ if compute_ref_sol:
                 samp.save_discretization(ref_discretization, filename)
                 # ref_solutions_filenames.append( filename )
     # print ref_solutions_filenames
-    print 'Reference Solutions Computed'
+    print('Reference Solutions Computed')
 
 
 
@@ -310,7 +310,7 @@ if compute_est_sol:
         QoI_indices = QoI_choice_list[sol_num]
         est_sol_dir_2 = est_sol_dir + 'QoI_choice_%d'%(sol_num+1) + '/'
         
-        print 'Solving Inverse Problems for QoI_%d'%(sol_num)
+        print('Solving Inverse Problems for QoI_%d'%(sol_num))
         for M in M_values: # for each data-space discretization
             Mval = M**(1 + (dim_input-1)*(data_discretization_type == 'reg') )
             if recover:
@@ -323,7 +323,7 @@ if compute_est_sol:
             else:
                 est_sol_dir_3 = est_sol_dir_2 + '%s_M_%d'%(data_discretization_type, Mval) + '/'
             
-            print '\t With M = %d'%(Mval)
+            print('\t With M = %d'%(Mval))
             for N in pyprind.prog_bar(N_values):
                 Nval = N**(1 + (estimate_mesh_type == 'reg') )
                 est_sol_dir_4 = est_sol_dir_3 + '%s_N_%d'%(estimate_mesh_type, Nval) + '/' # all trial sols inside this folder

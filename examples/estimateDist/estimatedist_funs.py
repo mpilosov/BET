@@ -120,9 +120,9 @@ def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr ):
     
     # B_prob[A_prob == 0] = 0
     if B_samples_lost>0:
-        print '\t samples lost = %4d'%(B_samples_lost)
+        print('\t samples lost = %4d'%(B_samples_lost))
     if A_samples_lost>0:
-        print '\t !!!!! Integration samples lost = %4d'%(A_samples_lost)
+        print('\t !!!!! Integration samples lost = %4d'%(A_samples_lost))
     
     diff = (np.sqrt(den_A) - np.sqrt(den_B) )**2
     C = integration_sample_set.copy()
