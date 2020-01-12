@@ -169,7 +169,8 @@ if compute_emulated_set:
     # generate emulated set from true distribution
     Emulation_Set = samp.sample_set(dim_input)
     Emulation_Set.set_domain(dim_range)
-    Emulation_Set.set_values(np.array(np.transpose([np.random.beta(a=alpha, b=beta,
+    # to do: use modern sampling for this?
+    Emulation_Set.set_values(np.array(np.transpose([np.random.beta(a=1, b=1,
                                                                    size=num_samples_emulate_data_space) for i in range(dim_input)])))  # TODO multiple alpha, beta
     Emulation_Discretization = sampler.compute_QoI_and_create_discretization(
         Emulation_Set)

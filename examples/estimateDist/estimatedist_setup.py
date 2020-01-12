@@ -15,6 +15,7 @@ QoI_choice_list = [[0, 1], [2, 3]]
 my_model = make_model(temp_locs_list)
 sampler = bsam.sampler(my_model)
 
+# emulation set is given these and that's it. Shouldn't bother with anything except uniform, since it's used for volumes.
 alpha = 1  # TODO add functionality for multiple alpha, betas - one per input_dim
 beta = 1
 
@@ -44,7 +45,8 @@ kappa_lin = np.linspace(0.01, 0.2, 5)[1:-1]
 # like meshgrid, only easier to parse
 kappa_ref_locs = np.array([[k1, k2] for k1 in kappa_lin for k2 in kappa_lin])
 
-ref_input_num = 5  # 4 is middle
+# should be able to change this and run.sh
+ref_input_num = 2  # 4 is middle. choose 0-8
 ref_input = np.array([kappa_ref_locs[ref_input_num]])
 Qref = my_model(ref_input)[0]
 rect = 0.1  # currently scale, not size
@@ -62,10 +64,10 @@ legend_fsize = 14
 # compute_emulated_set = False
 
 # create_ref_disc = True
-# compute_ref_sol = False
+# compute_ref_sol = True
 
 # create_est_discs = True
-# compute_est_sol = False
+# compute_est_sol = True
 
 # need to run build_pointers before uncommenting next section.
 
