@@ -123,12 +123,14 @@ for BigN in BigN_values:  # reference solution resolution
 
             plt.xlabel('Number of Samples', fontsize=label_fsize)
             # plt.ylabel('Hellinger Distance\n (%dE5 MC samples)'%(Ival/1E5), fontsize=label_fsize)
-            plt.ylabel('Hellinger Distance', fontsize=label_fsize)
+#             plt.ylabel('Squared Hellinger Distance', fontsize=label_fsize)
+            plt.ylabel('Total Variation Distance', fontsize=label_fsize)
+
             plt.xscale('log')
             plt.yscale('log')
             plt.xticks(fontsize=tick_fsize)
             plt.yticks(fontsize=tick_fsize)
-            plt.gcf().subplots_adjust(bottom=0.125, left=0.125)
+#             plt.gcf().subplots_adjust(bottom=0.125, left=0.125)
 
             # legend_strings = [ '$Q^{(%s)}$'%alpha[qoi_idx] for qoi_idx in range(len(QoI_choice_list))]
             leg = ['MC Conv. Rate']
@@ -138,6 +140,7 @@ for BigN in BigN_values:  # reference solution resolution
             # NOTE: manually creating legend
             plt.legend(leg, loc='lower left', fontsize=legend_fsize)
             # plt.axis([20, 7500, 5E-3, 1])
+            plt.tight_layout()
             plt.savefig(new_data_filename)
 
             #

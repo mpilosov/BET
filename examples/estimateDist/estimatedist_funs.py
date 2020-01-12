@@ -20,6 +20,19 @@ def ensure_path_exists(folder):
         if exception.errno != errno.EEXIST:
             raise
 
+def mc_TV(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
+    if isinstance(set_A, samp.discretization):
+        set_A = set_A.get_input_sample_set()
+    if isinstance(set_B, samp.discretization):
+        set_B = set_B.get_input_sample_set()
+    metric = compP.comparison(comparison_sample_set=integration_sample_set,
+                     sample_set_left=set_A,
+                     ptr_left=set_A_ptr,
+                     sample_set_right=set_B,
+                     ptr_right=set_B_ptr
+                    )
+    return metric.value(functional='totvar'), integration_sample_set
+
 def mc_Hell(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
     if isinstance(set_A, samp.discretization):
         set_A = set_A.get_input_sample_set()
@@ -31,7 +44,7 @@ def mc_Hell(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
                      sample_set_right=set_B,
                      ptr_right=set_B_ptr
                     )
-    return metric.value(functional='hellinger'), integration_sample_set
+    return metric.value(functional='sqhellinger'), integration_sample_set
     
 def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
     # Aset, Bset are sample_set type objects, to be evaluated at the points in
