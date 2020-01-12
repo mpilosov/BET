@@ -97,9 +97,9 @@ for BigN in BigN_values:  # reference solution resolution
                         temp_array[trial, sol_num], C = mc_Hell(Integration_Set,
                                                                      Ref_Disc, ref_ptr,
                                                                      Est_Disc, est_ptr)
-                        if trial == 1 and N == 320:
-                            samp.save_sample_set(
-                                C, 'results_heatrod_3/diff_t%d_N%d_sol%d' % (trial, N, sol_num))
+#                         if trial == 1 and N == 320:
+#                             samp.save_sample_set(
+#                                 C, 'results_heatrod_3/diff_t%d_N%d_sol%d' % (trial, N, sol_num))
                             # Ref_Disc2, ref_ptr)
                 # print 'Computed for BigN = %8d, I = %6d, M = %3d, N = %6d'%(BigNval, Ival, Mval, Nval)
                 # print temp_array
@@ -117,3 +117,4 @@ for BigN in BigN_values:  # reference solution resolution
                     '_' + '%s_M_%d' % (data_discretization_type, Mval) + '_' + \
                     '%s_I_%d' % (integration_mesh_type, Ival)
             np.save(data_filename, data_dict)
+            print("Saved %s"%data_filename)

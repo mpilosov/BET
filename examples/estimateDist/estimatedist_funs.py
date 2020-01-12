@@ -31,6 +31,8 @@ def mc_Hell(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):
                      sample_set_right=set_B,
                      ptr_right=set_B_ptr
                     )
+#     metric.set_ptr_right(set_A_ptr)
+#     metric.set_ptr_left(set_B_ptr)
     return metric.value(functional='hellinger'), integration_sample_set
     
 def mc_Hellinger(integration_sample_set, set_A, set_A_ptr, set_B, set_B_ptr):

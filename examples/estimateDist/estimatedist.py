@@ -366,6 +366,7 @@ if compute_est_sol:
                             '_' + '%s_N_%d' % (estimate_mesh_type,
                                                Nval) + '_trial_%d' % (trial)
                     samp.save_discretization(my_discretization, filename)
+                    print("Saved %s."%filename)
                     # est_solutions_filenames.append(filename)
 
                 # print '\t \t %d Trials Completed for N = %d'%(num_trials, Nval)
