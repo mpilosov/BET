@@ -94,6 +94,7 @@ for BigN in BigN_values:  # reference solution resolution
                         # Ref_Disc2._input_sample_set._probabilities[~zero_probs] = 0
                         # Ref_Disc._input_sample_set._probabilities[~zero_probs] = 1./len(zero_probs[zero_probs == False])
                         # Ref_Disc._input_sample_set._probabilities[zero_probs] = 0
+                        print('trial %d, sol %d'%(trial, sol_num))
                         temp_array[trial, sol_num], C = mc_Hell(Integration_Set,
                                                                      Ref_Disc, ref_ptr,
                                                                      Est_Disc, est_ptr)
