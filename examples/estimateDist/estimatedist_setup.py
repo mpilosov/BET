@@ -30,7 +30,7 @@ BigN_values = [100]
 
 estimate_mesh_type = 'rand'
 # N_values = [20*2**n for n in range(8)]
-N_values = [100, 500, 1000]
+N_values = [100, 500, 1000, 2500, 5000]
 # use calculateP.prob_with_emulated_volumes or just calculateP.prob - this uses emulated points
 use_volumes = False
 num_emulated_input_samples = 1E6
@@ -59,28 +59,28 @@ tick_fsize = 14
 legend_fsize = 14
 
 # Initial Run
-# create_int_sets = True
-# create_data_discs = True
-# compute_emulated_set = False
+create_int_sets = True
+create_data_discs = True
+compute_emulated_set = False
 
-# create_ref_disc = True
-# compute_ref_sol = True
+create_ref_disc = True
+compute_ref_sol = True
 
-# create_est_discs = True
-# compute_est_sol = True
+create_est_discs = True
+compute_est_sol = True
 
 # need to run build_pointers before uncommenting next section.
 
 # ## Post-Processing - change description of uncertainty on output
-create_int_sets = False
-create_data_discs = False
-compute_emulated_set = False
+# create_int_sets = False
+# create_data_discs = False
+# compute_emulated_set = False
 
-create_ref_disc = False
-compute_ref_sol = True
+# create_ref_disc = False
+# compute_ref_sol = True
 
-create_est_discs = False
-compute_est_sol = True
+# create_est_discs = False
+# compute_est_sol = True
 
 cwd = os.getcwd()
 results_dir = 'results_heatrod_3'

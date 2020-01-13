@@ -1,9 +1,12 @@
-from dolfin import *
+import dolfin as df
 import numpy as np
 
-def make_model(temp_locs_list):
+def make_model(temp_locs_list, end_time = 1.0):
+    """
+    TODO: put parameters into options
+    """
     # heatrod code here - including all settings
-    t_stop = 1.0
+    t_stop = end_time
 
     # Some fixed parameter values
     amp = 50.0  # amplitude of the heat source
@@ -14,71 +17,90 @@ def make_model(temp_locs_list):
     rho = 1.5  # density
 
     # 'parameters' reserved for FEnICS
-    parameters['allow_extrapolation'] = True
+    df.parameters['allow_extrapolation'] = True
 
     # mesh properties
-    nx = 50  # this is ~ our h value
-    mesh = IntervalMesh(nx, 0, 1)
+    nx = 50  # this is our h value
+    mesh = df.IntervalMesh(nx, 0, 1)
     degree = 1
     r = 1.0  # time stepping ratios - attention to stability
     dt = r/nx
 
     # turn off the heat halfway through
-    t_heatoff = t_stop/2.0
+    t_heatoff = 0.5
 
-    def my_model(parameter_samples):
-        QoI_samples = np.zeros((len(parameter_samples), len(temp_locs_list)))
+    def model(parameter_samples):
+        """
+        TODO: string-formatting that displays the models parameters.
 
-        for i in range(len(parameter_samples)):
-            kappa_0 = parameter_samples[i, 0]
-            kappa_1 = parameter_samples[i, 1]
+        Returns model evaluated at `T={end_time}`.
+        """.format(end_time=end_time)
+
+        if parameter_samples.ndim == 1:
+            assert len(parameter_samples) == 2
+            num_samples = 1
+        else:
+            num_samples = parameter_samples.shape[0]
+        QoI_samples = np.zeros((num_samples, len(temp_locs_list)))
+
+        for i in range(num_samples):
+            try:
+                kappa_0 = parameter_samples[i, 0]
+                kappa_1 = parameter_samples[i, 1]
+            except IndexError:
+                kappa_0 = parameter_samples[0]
+                kappa_1 = parameter_samples[1]
 
             # define the subspace we will solve the problem in
-            V = FunctionSpace(mesh, 'Lagrange', degree)
+            V = df.FunctionSpace(mesh, 'Lagrange', degree)
 
             # split the domain down the middle(dif therm cond)
             kappa_str = 'x[0] > 0.5 ?'\
                 'kappa_1 : kappa_0'
 
             # Physical parameters
-            kappa = Expression(kappa_str, kappa_0=kappa_0,
+            kappa = df.Expression(kappa_str, kappa_0=kappa_0,
                                kappa_1=kappa_1, degree=1)
             # Define initial condition(initial temp of plate)
-            T_current = interpolate(Constant(T_R), V)
+            T_current = df.interpolate(df.Constant(T_R), V)
 
             # Define variational problem
-            T = TrialFunction(V)
+            T = df.TrialFunction(V)
 
             # two f's and L's for heat source on and off
-            f_heat = Expression(
+            f_heat = df.Expression(
                 'amp*exp(-(x[0]-px)*(x[0]-px)/width)', amp=amp, px=px, width=width, degree=1)
-            f_cool = Constant(0)
-            v = TestFunction(V)
-            a = rho*cap*T*v*dx + dt*kappa * \
-                inner(nabla_grad(v), nabla_grad(T))*dx
-            L_heat = (rho*cap*T_current*v + dt*f_heat*v)*dx
-            L_cool = (rho*cap*T_current*v + dt*f_cool*v)*dx
+            f_cool = df.Constant(0)
+            v = df.TestFunction(V)
+            a = rho*cap*T*v*df.dx + dt*kappa * \
+                df.inner(df.nabla_grad(v), df.nabla_grad(T))*df.dx
+            L_heat = (rho*cap*T_current*v + dt*f_heat*v)*df.dx
+            L_cool = (rho*cap*T_current*v + dt*f_cool*v)*df.dx
 
-            A = assemble(a)
+            A = df.assemble(a)
             b = None  # variable used for memory savings in assemble calls
 
-            T = Function(V)
+            T = df.Function(V)
             t = dt  # initialize first time step
             print("%d Starting timestepping."%i)
             # time stepping method is BWD Euler. (theta = 1)
             while t <= t_stop:
                 if t < t_heatoff:
-                    b = assemble(L_heat, tensor=b)
+                    b = df.assemble(L_heat, tensor=b)
                 else:
-                    b = assemble(L_cool, tensor=b)
-                solve(A, T.vector(), b)
+                    b = df.assemble(L_cool, tensor=b)
+                df.solve(A, T.vector(), b)
 
                 t += dt
                 T_current.assign(T)
 
             # now that the state variable (Temp at time t_stop) has been computed,
             # we take our point-value measurements
-            QoI_samples[i] = np.array([T(xi) for xi in temp_locs_list])
+            QoI_samples[i,:] = np.array([T(xi) for xi in temp_locs_list])
+        # if QoI_samples.shape[0] == 1:
+        #     QoI_samples = QoI_samples.ravel()[0]
         return QoI_samples
 
-    return my_model
+    return model
+
+
